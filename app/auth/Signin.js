@@ -5,7 +5,7 @@ export default function Signin() {
     const router = useRouter();
 
     const handleSignin = () => {
-        router.replace('/tabs/home');  // Redirection vers la page principale
+        router.replace('/home'); 
     };
 
     return (
@@ -13,8 +13,8 @@ export default function Signin() {
             <Text>Connexion</Text>
             <TextInput placeholder="Email" style={{ borderWidth: 1, marginVertical: 10 }} />
             <TextInput placeholder="Mot de passe" secureTextEntry style={{ borderWidth: 1, marginVertical: 10 }} />
-            <Button title="Se connecter" onPress={handleLogin} />
-            <Button title="Créer un compte" onPress={() => router.push('/auth/Signup')} />
+            <Button title="Se connecter" onPress={handleSignin} />
+            <Button title="Créer un compte" onPress={() => router.push('/auth/signup')} />
         </View>
     );
 }

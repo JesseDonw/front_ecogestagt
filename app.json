@@ -3,6 +3,7 @@
     "name": "ecogestagt",
     "slug": "ecogestagt",
     "version": "1.0.0",
+    "scheme": "ecogestagtlink",
     "orientation": "portrait",
     "icon": "./assets/logo2.png",
     "userInterfaceStyle": "light",

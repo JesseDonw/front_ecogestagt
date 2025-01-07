@@ -1,25 +1,20 @@
-import { Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
 
-SplashScreen.preventAutoHideAsync();
-
-export default function Layout() {
-    const [appReady, setAppReady] = useState(false);
-
-    useEffect(() => {
-        const prepareApp = async () => {
-            // Simuler un chargement (comme le chargement de polices ou données)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            setAppReady(true);
-            await SplashScreen.hideAsync();
-        };
-        prepareApp();
-    }, []);
-
-    if (!appReady) {
-        return null; // Éviter d'afficher l'app tant que ce n'est pas prêt
-    }
-
-    return <Stack screenOptions={{ headerShown: false }} />;
+export default function Check() {
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <StatusBar style="auto" />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
