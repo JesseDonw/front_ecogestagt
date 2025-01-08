@@ -13,7 +13,10 @@ import { useRouter } from 'expo-router';
 import logo from '../../assets/logo.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import person from '../../assets/person.png';
+import mail from '../../assets/mail.png';
+import lock from '../../assets/lock.png';
+import { Colors } from '../../constants/Colors'
 
 export default function SignUp() {
     const router = useRouter();
@@ -79,29 +82,59 @@ export default function SignUp() {
         source={logo}
         style={styles.logo}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Nom"
-        value={nom}
-        onChangeText={(text) => setNom(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Prénom"
-        value={prenom}
-        onChangeText={(text) => setPrenom(text)}
-      />
-   
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <View style={styles.passwordContainer}>
+      
+        
+      {/* Champ Nom */}
+      <View style={styles.inputContainer}>
+        <Image
+          source={person} // Icône pour "Nom"
+          style={styles.person}
+        />
         <TextInput
-          style={styles.passwordInput}
+          style={[styles.input, styles.shadow]}
+          placeholder="Nom"
+          value={nom}
+          onChangeText={(text) => setNom(text)}
+        />
+      </View>
+
+      {/* Champ Prénom */}
+      <View style={styles.inputContainer}>
+        <Image
+          source={person} // Icône pour "Prénom"
+          style={styles.person}
+        />
+        <TextInput
+    style={[styles.input, styles.shadow]}
+    placeholder="Prénom"
+    value={prenom}
+    onChangeText={(text) => setPrenom(text)}
+        />
+      </View>
+
+      {/* Champ Email */}
+      <View style={styles.inputContainer}>
+        <Image
+          source={mail} // Icône pour "Email"
+          style={styles.mail}
+        />
+        <TextInput
+          style={[styles.input, styles.shadow]}
+          placeholder="Email"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+      </View>
+
+      {/* Champ Password */}
+      <View style={styles.passwordContainer}>
+        <Image
+          source={lock} // Icône pour "Password"
+          style={styles.lock}
+        />
+        <TextInput
+          style={[styles.passwordInput ,styles.shadow]}
           placeholder="Password"
           secureTextEntry={!passwordVisible}
           value={password}
@@ -111,13 +144,21 @@ export default function SignUp() {
           onPress={() => setPasswordVisible(!passwordVisible)}
           style={styles.eyeIcon}
         >
-          {passwordVisible ? <MaterialCommunityIcons name="eye-off" size={24} color="black" /> : <MaterialCommunityIcons name="eye" size={24} color="black" />}
+          {passwordVisible ? (
+            <MaterialCommunityIcons name="eye-off" size={24} color="black" />
+          ) : (
+            <MaterialCommunityIcons name="eye" size={24} color="black" />
+          )}
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.createButton} onPress={handleRegister}>
         <Text style={styles.createButtonText}>Créer un compte</Text>
       </TouchableOpacity>
+       <TouchableOpacity onPress={() => router.push('/auth/signin')}>
+                      <Text style={styles.linkText}> Avez vous déja un compte ? </Text>
+                  </TouchableOpacity>
         </View>
+        
     </KeyboardAwareScrollView>
   );
 };
@@ -136,45 +177,92 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     
   },
+
+  person: {
+    width: 40,
+    height: 40,
+    marginRight: -10,
+  },
+
+  mail: {
+    width: 40,
+    height: 40,
+    marginRight: -10,
+  },
+
+  lock: {
+    width: 40,
+    height: 40,
+    marginRight: -10,
+  },
+
   input: {
-    width: '100%',
+    flex: 1,
     height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
     paddingHorizontal: 10,
   },
+
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 15,
     marginBottom: 15,
     width: '100%',
+    
+  },
+  inputContainer:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 15,
+    marginBottom: 15,
+    width: '100%',
+   
   },
   passwordInput: {
     flex: 1,
     height: 50,
     paddingHorizontal: 10,
+
   },
+
+  shadow: {
+    // Shadow properties for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.7,
+    shadowRadius: 5,
+
+    // Shadow properties for Android
+    elevation: 5,
+  },
+
   eyeIcon: {
     paddingHorizontal: 10,
   },
   createButton: {
-    backgroundColor: '#008000',
+    backgroundColor: Colors.vert,
     width: '100%',
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5,
+    borderRadius: 15,
     marginTop: 15,
+    paddingHorizontal: 25,
   },
+  
   createButtonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
+  linkText: {
+    color: '#008000',
+    textDecorationLine: 'underline',
+    marginTop: 10,
+},
 });
  
