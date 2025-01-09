@@ -25,7 +25,7 @@ export  default function CongratsScreen() {
     <View style={styles.container}>
       {/* Image en haut */}
       <Image
-        source={check} // Remplacez par le chemin de votre image
+        source={check}
         style={styles.check}
       />
 
@@ -43,35 +43,36 @@ export  default function CongratsScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
   check: {
-   
-    width: 400, // Ajustez la taille selon votre image
+    width: 400,
     height:200,
     marginBottom: 0,
   },
   title: {
     fontFamily: "AbhayaLibreExtraBold",
     fontSize: 32,
-    color: Colors.vert, // Vert comme dans l'image
+    color: Colors.vert,
     marginBottom: 10,
   },
   subtitle: {
     fontFamily: "AbhayaLibreExtraBold",
-    fontSize: 25,
+    fontSize: 20,
     color: '#333',
     marginBottom: 50,
   },
   button: {
-    backgroundColor:  Colors.vert, // Vert pour le bouton
+    position: "absolute",
+    bottom: 35,
+    backgroundColor:  Colors.vert,
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 40,
-    
   },
   buttonText: {
     fontFamily: "AbhayaLibreExtraBold",
