@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   Image,
+  ActivityIndicator,
 
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -22,6 +23,7 @@ import axios from 'axios';
 
 export default function SignUp() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
@@ -222,8 +224,13 @@ export default function SignUp() {
           {error.password && <CustomError />}
         </View>
 
-        <TouchableOpacity style={styles.createButton} onPress={handleSignup}>
-          <Text style={styles.createButtonText}>Créer un compte</Text>
+        <TouchableOpacity style={styles.createButton} onPress={() => loading ? null : handleSignup()}>
+          {loading ?
+                              <ActivityIndicator color={Colors.vert} />
+                              :
+                              <Text style={styles.createButtonText}>Créer un compte</Text>
+                          }
+         
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push('/auth/signin')}>
           <Text style={styles.linkText}> Avez vous déja un compte ? </Text>
@@ -343,9 +350,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontSize: 14,
   },
-viewInputError: {
-  marginBottom: 5,
+  viewInputError: {
+    marginBottom: 5,
 
-},
+  },
 });
 
