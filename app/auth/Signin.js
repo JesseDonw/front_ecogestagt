@@ -168,10 +168,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input: {
+        backgroundColor:'#ffffff',
         width: '100%',
         height: 50,
         borderColor: '#ccc',
-        borderWidth: 1,
+        borderWidth: 0.2,
         borderRadius: 15,
         marginBottom: 15,
         paddingHorizontal: 10,
@@ -180,13 +181,14 @@ const styles = StyleSheet.create({
 
     shadow: {
         // Shadow properties for iOS
+    
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.7,
+        shadowOpacity: 0.2,
         shadowRadius: 5,
     
         // Shadow properties for Android
-        elevation: 5,
+        elevation: 20,
       },
 
     loginButton: {

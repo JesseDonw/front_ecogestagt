@@ -17,6 +17,7 @@ import person from '../../assets/person.png';
 import mail from '../../assets/mail.png';
 import lock from '../../assets/lock.png';
 import { Colors } from '../../constants/Colors'
+import { StatusBar } from 'expo-status-bar';
 
 export default function SignUp() {
     const router = useRouter();
@@ -77,6 +78,7 @@ export default function SignUp() {
 
   return (
     <KeyboardAwareScrollView contentContainerStyle={{ flexGrow:1}}>
+     < StatusBar/>
         <View style={styles.container}>
       <Image
         source={logo}
@@ -85,13 +87,13 @@ export default function SignUp() {
       
         
       {/* Champ Nom */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, styles.shadow]}>
         <Image
           source={person} // Icône pour "Nom"
           style={styles.person}
         />
         <TextInput
-          style={[styles.input, styles.shadow]}
+          style={styles.input}
           placeholder="Nom"
           value={nom}
           onChangeText={(text) => setNom(text)}
@@ -99,13 +101,13 @@ export default function SignUp() {
       </View>
 
       {/* Champ Prénom */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, styles.shadow]}>
         <Image
           source={person} // Icône pour "Prénom"
           style={styles.person}
         />
         <TextInput
-    style={[styles.input, styles.shadow]}
+    style={styles.input}
     placeholder="Prénom"
     value={prenom}
     onChangeText={(text) => setPrenom(text)}
@@ -113,13 +115,13 @@ export default function SignUp() {
       </View>
 
       {/* Champ Email */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, styles.shadow]}>
         <Image
           source={mail} // Icône pour "Email"
           style={styles.mail}
         />
         <TextInput
-          style={[styles.input, styles.shadow]}
+          style={styles.input}
           placeholder="Email"
           keyboardType="email-address"
           value={email}
@@ -128,13 +130,13 @@ export default function SignUp() {
       </View>
 
       {/* Champ Password */}
-      <View style={styles.passwordContainer}>
+      <View style={[styles.passwordContainer, styles.shadow]}>
         <Image
           source={lock} // Icône pour "Password"
           style={styles.lock}
         />
         <TextInput
-          style={[styles.passwordInput ,styles.shadow]}
+          style={styles.passwordInput}
           placeholder="Password"
           secureTextEntry={!passwordVisible}
           value={password}
@@ -200,32 +202,35 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     paddingHorizontal: 10,
+  
+   
   },
 
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: '#ccc',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderRadius: 15,
     marginBottom: 15,
     width: '100%',
-    
+    backgroundColor:'#ffffff',
   },
   inputContainer:{
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: '#ccc',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderRadius: 15,
     marginBottom: 15,
     width: '100%',
-   
+    backgroundColor:'#ffffff',
   },
   passwordInput: {
     flex: 1,
     height: 50,
     paddingHorizontal: 10,
+    backgroundColor:'#ffffff',
 
   },
 
@@ -233,11 +238,11 @@ const styles = StyleSheet.create({
     // Shadow properties for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.7,
+    shadowOpacity: 0.5,
     shadowRadius: 5,
 
     // Shadow properties for Android
-    elevation: 5,
+    elevation: 20,
   },
 
   eyeIcon: {
