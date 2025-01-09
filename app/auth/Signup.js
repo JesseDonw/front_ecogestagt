@@ -22,7 +22,7 @@ export default function SignUp() {
     const router = useRouter();
 
     const handleRegister = () => {
-        router.replace('/home');
+        router.replace('/auth/check');
     };
 
   const [nom, setNom] = useState('');

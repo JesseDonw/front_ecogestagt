@@ -12,9 +12,16 @@ import { useRouter } from 'expo-router';
 import check from '../../assets/check.png';
 
 import { Colors } from '../../constants/Colors'
+export  default function CongratsScreen() {
 
-const CongratsScreen = ({ navigation }) => {
+  const router = useRouter();
+
+    const handleCheck = () => {
+        router.replace('/home');
+    };
+
   return (
+  
     <View style={styles.container}>
       {/* Image en haut */}
       <Image
@@ -23,12 +30,12 @@ const CongratsScreen = ({ navigation }) => {
       />
 
       {/* Texte principal */}
-      <Text style={styles.title}>Congrats!</Text>
-      <Text style={styles.subtitle}>Your Profile Is Ready To Use</Text>
+      <Text style={styles.title}>Félicitation !</Text>
+      <Text style={styles.subtitle}>Votre profil est prêt à être utilisé</Text>
 
       {/* Bouton "Next" */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Next</Text>
+      <TouchableOpacity style={styles.button} onPress={handleCheck}>
+        <Text style={styles.buttonText}>Suivant</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,15 +48,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  image: {
-    width: 120, // Ajustez la taille selon votre image
-    height: 120,
-    marginBottom: 30,
+  check: {
+   
+    width: 400, // Ajustez la taille selon votre image
+    height:200,
+    marginBottom: 0,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#0C803B', // Vert comme dans l'image
+    color: Colors.vert, // Vert comme dans l'image
     marginBottom: 10,
   },
   subtitle: {
@@ -58,10 +66,11 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   button: {
-    backgroundColor: '#0C803B', // Vert pour le bouton
+    backgroundColor:  Colors.vert, // Vert pour le bouton
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 40,
+    
   },
   buttonText: {
     color: '#fff',
@@ -69,5 +78,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 
 
