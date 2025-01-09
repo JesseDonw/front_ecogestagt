@@ -55,13 +55,14 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: "AbhayaLibreExtraBold",
+    fontSize: 32,
     color: Colors.vert, // Vert comme dans l'image
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontFamily: "AbhayaLibreExtraBold",
+    fontSize: 25,
     color: '#333',
     marginBottom: 50,
   },
@@ -73,9 +74,10 @@ const styles = StyleSheet.create({
     
   },
   buttonText: {
+    fontFamily: "AbhayaLibreExtraBold",
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    
   },
 });
 
