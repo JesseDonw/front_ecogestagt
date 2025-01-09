@@ -17,7 +17,6 @@ import person from '../../assets/person.png';
 import mail from '../../assets/mail.png';
 import lock from '../../assets/lock.png';
 import { Colors } from '../../constants/Colors'
-import { StatusBar } from 'expo-status-bar';
 
 export default function SignUp() {
     const router = useRouter();
@@ -78,7 +77,6 @@ export default function SignUp() {
 
   return (
     <KeyboardAwareScrollView contentContainerStyle={{ flexGrow:1}}>
-     < StatusBar/>
         <View style={styles.container}>
       <Image
         source={logo}

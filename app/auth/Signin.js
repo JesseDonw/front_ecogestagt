@@ -88,17 +88,19 @@ export default function Signin() {
                 source={logo}
                 style={styles.logo}
             />
-          
+
             <Text style={styles.title}>Connectez-vous à votre compte </Text>
-            
+
             <TextInput
                 style={[styles.input, styles.shadow]}
                 placeholder="Email"
+                selectionColor={Colors.vert}
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
             />
             <TextInput
+                selectionColor={Colors.vert}
                 style={[styles.input, styles.shadow]}
                 placeholder="Password"
                 secureTextEntry
@@ -111,17 +113,17 @@ export default function Signin() {
             <Text style={styles.orText}>Ou continuer avec </Text>
             <View style={styles.socialButtonsContainer}>
                 <TouchableOpacity style={styles.socialButton}>
-                <Image
-                source={facebook}
-                style={styles.facebook}
-            />
+                    <Image
+                        source={facebook}
+                        style={styles.facebook}
+                    />
                     <Text style={styles.socialButtonText}>Facebook</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.socialButton}>
-                <Image
-                source={google}
-                style={styles.google}
-            />
+                    <Image
+                        source={google}
+                        style={styles.google}
+                    />
                     <Text style={styles.socialButtonText}>Google</Text>
                 </TouchableOpacity>
             </View>
@@ -145,30 +147,31 @@ const styles = StyleSheet.create({
     },
 
     facebook: {
-        width:25,
-        height:25,
-        
+        width: 25,
+        height: 25,
+
 
     },
 
     google: {
-        width:25,
-        height:25,
+        width: 25,
+        height: 25,
 
     },
 
     logo: {
         width: 350,
         height: 190,
-        marginBottom:0,
+        marginBottom: 0,
     },
     title: {
+        fontFamily: "AbhayaLibreExtraBold",
         fontSize: 20,
-        fontWeight: 'bold',
         marginBottom: 20,
     },
     input: {
-        backgroundColor:'#ffffff',
+        fontFamily: "AbhayaLibreExtraBold",
+        backgroundColor: '#ffffff',
         width: '100%',
         height: 50,
         borderColor: '#ccc',
@@ -176,20 +179,19 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginBottom: 15,
         paddingHorizontal: 10,
-    
-    }, 
+    },
 
     shadow: {
         // Shadow properties for iOS
-    
+
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
-    
+
         // Shadow properties for Android
         elevation: 20,
-      },
+    },
 
     loginButton: {
         backgroundColor: Colors.vert,
@@ -198,17 +200,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 15,
-        marginBottom: 15,
         paddingHorizontal: 25,
     },
     loginButtonText: {
+        fontFamily: "AbhayaLibreExtraBold",
         color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     orText: {
-        fontSize: 16,
-        marginBottom: 10,
+        fontFamily: "AbhayaLibreExtraBold",
+        fontSize: 14,
+        marginVertical: 30,
     },
     socialButtonsContainer: {
         flexDirection: 'row',
@@ -225,17 +227,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 8,
         borderRadius: 15,
-        borderColor:'grey',
+        borderColor: 'grey',
         borderWidth: 0.2,
     },
     socialButtonText: {
+        fontFamily: "AbhayaLibreExtraBold",
         color: '#000',
-        fontWeight: 'bold',
+        fontSize: 16,
     },
     linkText: {
+        fontFamily: "AbhayaLibreExtraBold",
         color: '#008000',
         textDecorationLine: 'underline',
         marginTop: 10,
+        fontSize: 14,
     },
 });
 
