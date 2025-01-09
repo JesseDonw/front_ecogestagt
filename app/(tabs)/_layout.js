@@ -1,12 +1,17 @@
 import { Tabs } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
+import homeU from "../../assets/home_u.png"
+import { Image, StyleSheet } from "react-native"
 
 export default function TabsLayout() {
     return (
         <Tabs screenOptions={{ headerShown: false }}>
             <Tabs.Screen
                 name="home"
-                options={{ title: 'Accueil', tabBarIcon: ({ color }) => <FontAwesome name="home" color={color} size={24} /> }}
+                options={{ title: 'Accueil', tabBarIcon: ({ color }) => <Image
+                                source={homeU}
+                                style={styles.home}
+                            /> }}
             />
             <Tabs.Screen
                 name="profile"
@@ -23,3 +28,10 @@ export default function TabsLayout() {
         </Tabs>
     );
 }
+
+const styles = StyleSheet.create({
+    home: {
+        width: 50,
+        height: 25,
+    }
+})
