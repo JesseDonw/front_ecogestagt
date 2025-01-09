@@ -11,5 +11,6 @@ export const Colors = {
     vert_select: "#00722C",
     vert_unselect: "#00722C",//opacité 23 pourcent
     orange: "#FF9012",
-    orange_foncer: "#DA6317"
+    orange_foncer: "#DA6317",
+    danger: "#dc3545"
 }

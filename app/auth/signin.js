@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,79 +7,90 @@ import {
     StyleSheet,
     Alert,
     Image,
+    ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import logo from '../../assets/logo.png';
 import facebook from '../../assets/facebook.png';
 import google from '../../assets/google.png';
 import { Colors } from '../../constants/Colors'
+import CustomError from '../../component/CustomError';
+import axios from 'axios';
 
 
 export default function Signin() {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-    const handleSignin = () => {
-        router.replace('/home');
-    };
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState({
+        email: false,
+        password: false,
+    });
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
 
+    useEffect(() => {
+        if(email){
+            setError((e) => ({
+                ...e,
+                email: false
+            }))
+        }
+    }, [email])
+
+    useEffect(() => {
+        if(password){
+            setError((e) => ({
+                ...e,
+                password: false
+            }))
+        }
+    }, [password])
+
     const verifiedForm = () => {
-        if (!email) {
-            Alert.alert('Erreur', "L'adresse email est requise.");
-            return;
+        const newErrors = {}
+        if (email?.trim()) {
+            if (!validateEmail(email.trim())) {
+                newErrors.email = true;
+            }
+        } else {
+            newErrors.email = true;
         }
 
-        if (!validateEmail(email)) {
-            Alert.alert('Erreur', "L'adresse email n'est pas valide.");
-            return;
+        if (!password?.trim()) {
+            newErrors.password = true;
         }
 
-        if (!password) {
-            Alert.alert('Erreur', 'Le mot de passe est requis.');
-            return;
-        }
-
-        if (password.length < 6) {
-            Alert.alert(
-                'Erreur',
-                'Le mot de passe doit contenir au moins 6 caractères.'
-            );
-            return;
-        }
+        setError(newErrors)
+        return Object.keys(newErrors).length === 0
     }
 
-    const handleLogin = () => {
-        if (!email) {
-            Alert.alert('Erreur', "L'adresse email est requise.");
-            return;
-        }
+    const handleSignin = async () => {
+        try {
+            if (verifiedForm()) {
+                setLoading(true)
+                const data = {
+                    email: email?.trim(),
+                    password: password?.trim(),
+                }
 
-        if (!validateEmail(email)) {
-            Alert.alert('Erreur', "L'adresse email n'est pas valide.");
-            return;
-        }
+                //const response = await axios.post(Key.Url + 'jwt/create/', data);
 
-        if (!password) {
-            Alert.alert('Erreur', 'Le mot de passe est requis.');
-            return;
-        }
+                console.log('connecté :>> ');
+                router.replace("/home")
+            }
 
-        if (password.length < 6) {
-            Alert.alert(
-                'Erreur',
-                'Le mot de passe doit contenir au moins 6 caractères.'
-            );
-            return;
-        }
 
-        // Simuler une connexion réussie
-        Alert.alert('Succès', 'Connexion réussie!');
+        } catch (error) {
+            console.log('error :>> ', error);
+        } finally {
+            setLoading(false)
+        }
     };
 
     return (
@@ -91,24 +102,41 @@ export default function Signin() {
 
             <Text style={styles.title}>Connectez-vous à votre compte </Text>
 
+            <View
+                style={[styles.inputContainer, styles.shadow]}
+            >
             <TextInput
-                style={[styles.input, styles.shadow]}
+                style={styles.input}
                 placeholder="Email"
                 selectionColor={Colors.vert}
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
             />
-            <TextInput
+            {error.email && <CustomError />}
+            </View>
+            <View
+                style={[styles.inputContainer, styles.shadow]}
+            >
+                <TextInput
                 selectionColor={Colors.vert}
-                style={[styles.input, styles.shadow]}
+                style={[styles.input]}
                 placeholder="Password"
                 secureTextEntry
                 value={password}
                 onChangeText={(text) => setPassword(text)}
             />
-            <TouchableOpacity style={styles.loginButton} onPress={handleSignin}>
-                <Text style={styles.loginButtonText}>Se connecter</Text>
+            {error.password && <CustomError />}
+            </View>
+            <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => loading ? null : handleSignin()}
+            >
+                {loading ?
+                    <ActivityIndicator color={Colors.vert} />
+                    :
+                    <Text style={styles.loginButtonText}>Se connecter</Text>
+                }
             </TouchableOpacity>
             <Text style={styles.orText}>Ou continuer avec </Text>
             <View style={styles.socialButtonsContainer}>
@@ -154,7 +182,6 @@ const styles = StyleSheet.create({
     google: {
         width: 25,
         height: 25,
-
     },
 
     logo: {
@@ -167,6 +194,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 20,
     },
+    inputContainer: {
+        width: '100%',
+        height: 50,
+        borderRadius: 15,
+        marginBottom: 20,
+    },
     input: {
         fontFamily: "AbhayaLibreExtraBold",
         backgroundColor: '#ffffff',
@@ -175,8 +208,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 0.2,
         borderRadius: 15,
-        marginBottom: 15,
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
     },
 
     shadow: {
@@ -230,15 +262,15 @@ const styles = StyleSheet.create({
         borderWidth: 0.2,
 
 
-         // Shadow properties for iOS
+        // Shadow properties for iOS
 
-         shadowColor: '#000',
-         shadowOffset: { width: 0, height: 4 },
-         shadowOpacity: 0.1,
-         shadowRadius: 5,
- 
-         // Shadow properties for Android
-         elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+
+        // Shadow properties for Android
+        elevation: 2,
     },
     socialButtonText: {
         fontFamily: "AbhayaLibreExtraBold",
