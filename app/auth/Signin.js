@@ -149,8 +149,6 @@ const styles = StyleSheet.create({
     facebook: {
         width: 25,
         height: 25,
-
-
     },
 
     google: {
@@ -186,7 +184,7 @@ const styles = StyleSheet.create({
 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 5,
 
         // Shadow properties for Android
@@ -201,6 +199,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 15,
         paddingHorizontal: 25,
+        marginTop: 10
     },
     loginButtonText: {
         fontFamily: "AbhayaLibreExtraBold",
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
     },
     socialButton: {
         flexDirection: 'row',
-        backgroundColor: 'white',
+        backgroundColor: '#ffffff',
         width: '45%',
         height: 50,
         alignItems: 'center',
@@ -229,6 +228,17 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderColor: 'grey',
         borderWidth: 0.2,
+
+
+         // Shadow properties for iOS
+
+         shadowColor: '#000',
+         shadowOffset: { width: 0, height: 4 },
+         shadowOpacity: 0.1,
+         shadowRadius: 5,
+ 
+         // Shadow properties for Android
+         elevation: 2,
     },
     socialButtonText: {
         fontFamily: "AbhayaLibreExtraBold",
