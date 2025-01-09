@@ -92,6 +92,7 @@ export default function SignUp() {
         />
         <TextInput
           style={styles.input}
+          selectionColor={Colors.vert}
           placeholder="Nom"
           value={nom}
           onChangeText={(text) => setNom(text)}
@@ -106,6 +107,7 @@ export default function SignUp() {
         />
         <TextInput
     style={styles.input}
+    selectionColor={Colors.vert}
     placeholder="Prénom"
     value={prenom}
     onChangeText={(text) => setPrenom(text)}
@@ -120,6 +122,7 @@ export default function SignUp() {
         />
         <TextInput
           style={styles.input}
+          selectionColor={Colors.vert}
           placeholder="Email"
           keyboardType="email-address"
           value={email}
@@ -135,6 +138,7 @@ export default function SignUp() {
         />
         <TextInput
           style={styles.passwordInput}
+          selectionColor={Colors.vert}
           placeholder="Password"
           secureTextEntry={!passwordVisible}
           value={password}
@@ -197,9 +201,11 @@ const styles = StyleSheet.create({
   },
 
   input: {
+    fontFamily: "AbhayaLibreExtraBold",
     flex: 1,
     height: 50,
     paddingHorizontal: 10,
+    fontSize: 16,
   
    
   },
@@ -225,10 +231,12 @@ const styles = StyleSheet.create({
     backgroundColor:'#ffffff',
   },
   passwordInput: {
+    fontFamily: "AbhayaLibreExtraBold",
     flex: 1,
     height: 50,
     paddingHorizontal: 10,
     backgroundColor:'#ffffff',
+    fontSize:16,
 
   },
 
@@ -236,7 +244,7 @@ const styles = StyleSheet.create({
     // Shadow properties for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
 
     // Shadow properties for Android
@@ -248,24 +256,26 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: Colors.vert,
-    width: '100%',
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    marginTop: 15,
-    paddingHorizontal: 25,
+        width: 'auto',
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 15,
+        paddingHorizontal: 25,
+        marginTop: 20,
   },
   
   createButtonText: {
+    fontFamily: "AbhayaLibreExtraBold",
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
   },
   linkText: {
+    fontFamily: "AbhayaLibreExtraBold",
     color: '#008000',
     textDecorationLine: 'underline',
-    marginTop: 10,
+    marginTop: 30,
+    fontSize: 14,
 },
 });
  
