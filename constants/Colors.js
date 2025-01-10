@@ -2,6 +2,7 @@
 
 export const Colors = {
     vert: "#01712B",
+    gradient33: "#53E88C38",
     gradient: "#53E88B",
     gradient_foncer: "#15BE77",
     noir: "#09051C",
