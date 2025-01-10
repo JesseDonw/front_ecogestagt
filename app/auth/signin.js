@@ -79,6 +79,8 @@ export default function Signin() {
                     password: password?.trim(),
                 }
 
+                console.log('data :>> ', data);
+
                 //const response = await axios.post(Key.Url + 'jwt/create/', data);
 
                 console.log('connecté :>> ');

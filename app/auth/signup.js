@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Image,
   ActivityIndicator,
 
@@ -14,7 +13,7 @@ import { useRouter } from 'expo-router';
 import logo from '../../assets/logo.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import person from '../../assets/person.png';
+import person from '../../assets/pers.png';
 import mail from '../../assets/mail.png';
 import lock from '../../assets/lock.png';
 import { Colors } from '../../constants/Colors'
@@ -115,6 +114,8 @@ export default function SignUp() {
           email: email?.trim(),
           password: password?.trim(),
         }
+
+        console.log('data :>> ', data);
 
         //const response = await axios.post(Key.Url + 'jwt/create/', data);
 

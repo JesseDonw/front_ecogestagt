@@ -6,9 +6,9 @@ import chatU from "../../assets/chat_u.png"
 import chatS from "../../assets/chat_s.png"
 import task from "../../assets/consult.png"
 import person from "../../assets/person.png"
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Colors } from '../../constants/Colors';
-
+import { Platform } from 'react-native';
 
 export default function TabsLayout() {
     return (
@@ -31,7 +31,7 @@ export default function TabsLayout() {
                 </Text>),
                 tabBarActiveBackgroundColor: Colors.gradient33,
                 tabBarItemStyle: styles.tabBarItemStyle,
-                tabBarStyle: styles.tabBarStyle,
+                tabBarStyle: {...styles.tabBarStyle},
             }}>
             <Tabs.Screen
                 name="home"
@@ -137,10 +137,8 @@ const styles = StyleSheet.create({
     },
 
     tabBarBadgeStyle: {
-        width: 18,
-        height: 18,
         borderColor: "#ffffff",
-        borderWidth: 1
+        borderWidth: 2
     },
 
     tabBarItemStyle: {
@@ -150,6 +148,7 @@ const styles = StyleSheet.create({
         marginVertical: 7,
         borderRadius: 13,
         overflow: "hidden",
+        pressColor: 'transparent' 
     },
 
     tabBarStyle: {
@@ -157,8 +156,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         elevation: 0,
         paddingHorizontal: 6,
-        height: 60,
         borderRadius: 22,
     },
-
 })
