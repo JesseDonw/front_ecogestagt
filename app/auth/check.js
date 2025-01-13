@@ -17,7 +17,7 @@ export  default function CongratsScreen() {
   const router = useRouter();
 
     const handleCheck = () => {
-        router.replace('/home');
+        router.replace('/auth/signin');
     };
 
   return (

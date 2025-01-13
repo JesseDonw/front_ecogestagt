@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import logo from '../../assets/logo.png';
@@ -16,7 +15,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import person from '../../assets/pers.png';
 import mail from '../../assets/mail.png';
 import lock from '../../assets/lock.png';
-import { Colors } from '../../constants/Colors'
+import { Colors } from '../../constants/Colors';
 import CustomError from '../../component/CustomError';
 import axios from 'axios';
 
@@ -40,44 +39,45 @@ export default function SignUp() {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
+
   useEffect(() => {
     if (nom) {
       setError((e) => ({
         ...e,
-        nom: false
-      }))
+        nom: false,
+      }));
     }
-  }, [nom])
+  }, [nom]);
 
   useEffect(() => {
     if (prenom) {
       setError((e) => ({
         ...e,
-        prenom: false
-      }))
+        prenom: false,
+      }));
     }
-  }, [prenom])
+  }, [prenom]);
 
   useEffect(() => {
     if (email) {
       setError((e) => ({
         ...e,
-        email: false
-      }))
+        email: false,
+      }));
     }
-  }, [email])
+  }, [email]);
 
   useEffect(() => {
     if (password) {
       setError((e) => ({
         ...e,
-        password: false
-      }))
+        password: false,
+      }));
     }
-  }, [password])
+  }, [password]);
 
   const verifiedForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!nom?.trim()) {
       newErrors.nom = true;
@@ -99,35 +99,42 @@ export default function SignUp() {
       newErrors.password = true;
     }
 
-
-    setError(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSignup = async () => {
     try {
       if (verifiedForm()) {
-        setLoading(true)
+        setLoading(true);
         const data = {
-          nom: nom?.trim(),
-          prenom: prenom?.trim(),
-          email: email?.trim(),
-          password: password?.trim(),
-        }
+          nom_utilisateur: nom?.trim(),
+          prenom_utilisateur: prenom?.trim(),
+          mail_utilisateur: email?.trim(),
+          mdp_utilisateur: password?.trim(),
+        };
 
         console.log('data :>> ', data);
 
-        //const response = await axios.post(Key.Url + 'jwt/create/', data);
+        // Assurez-vous d'utiliser l'URL correcte pour l'API
+        const response = await axios.post('https://f3b8-137-255-55-251.ngrok-free.app/api/register', data);
 
-        console.log('connecté :>> ');
-        router.replace('/auth/check')
+        console.log('Utilisateur créé avec succès :>> ', response.data);
+        router.replace('/auth/check');
       }
-
-
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('Erreur :>> ', error.response ? error.response.data : error.message);
+      if (error.response && error.response.data.errors) {
+        // Gérez les erreurs spécifiques renvoyées par le back-end ici
+        setError({
+          nom: error.response.data.errors.nom_utilisateur || false,
+          prenom: error.response.data.errors.prenom_utilisateur || false,
+          email: error.response.data.errors.mail_utilisateur || false,
+          password: error.response.data.errors.mdp_utilisateur || false,
+        });
+      }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -138,7 +145,6 @@ export default function SignUp() {
           source={logo}
           style={styles.logo}
         />
-
 
         {/* Champ Nom */}
         <View style={styles.viewInputError}>
@@ -157,7 +163,6 @@ export default function SignUp() {
           </View>
           {error.nom && <CustomError />}
         </View>
-
 
         {/* Champ Prénom */}
         <View style={styles.viewInputError}>
@@ -226,21 +231,20 @@ export default function SignUp() {
         </View>
 
         <TouchableOpacity style={styles.createButton} onPress={() => loading ? null : handleSignup()}>
-          {loading ?
-                              <ActivityIndicator color={Colors.vert} />
-                              :
-                              <Text style={styles.createButtonText}>Créer un compte</Text>
-                          }
-         
+          {loading ? (
+            <ActivityIndicator color={Colors.vert} />
+          ) : (
+            <Text style={styles.createButtonText}>Créer un compte</Text>
+          )}
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push('/auth/signin')}>
-          <Text style={styles.linkText}> Avez vous déja un compte ? </Text>
+          <Text style={styles.linkText}>Avez-vous déjà un compte ?</Text>
         </TouchableOpacity>
       </View>
-
     </KeyboardAwareScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

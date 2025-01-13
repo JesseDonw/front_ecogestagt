@@ -16,7 +16,7 @@ import google from '../../assets/google.png';
 import { Colors } from '../../constants/Colors'
 import CustomError from '../../component/CustomError';
 import axios from 'axios';
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Pour le stockage du token
 
 export default function Signin() {
     const router = useRouter();
@@ -41,7 +41,7 @@ export default function Signin() {
                 email: false
             }))
         }
-    }, [email])
+    }, [email]);
 
     useEffect(() => {
         if(password){
@@ -50,10 +50,10 @@ export default function Signin() {
                 password: false
             }))
         }
-    }, [password])
+    }, [password]);
 
     const verifiedForm = () => {
-        const newErrors = {}
+        const newErrors = {};
         if (email?.trim()) {
             if (!validateEmail(email.trim())) {
                 newErrors.email = true;
@@ -66,32 +66,39 @@ export default function Signin() {
             newErrors.password = true;
         }
 
-        setError(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
+        setError(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSignin = async () => {
         try {
             if (verifiedForm()) {
-                setLoading(true)
+                setLoading(true);
                 const data = {
-                    email: email?.trim(),
-                    password: password?.trim(),
-                }
+                    mail_utilisateur: email?.trim(),
+                    mdp_utilisateur: password?.trim(),
+                };
 
                 console.log('data :>> ', data);
 
-                //const response = await axios.post(Key.Url + 'jwt/create/', data);
+                // Envoi de la requête à l'API
+                const response = await axios.post('https://f3b8-137-255-55-251.ngrok-free.app/api/login', data);
 
-                console.log('connecté :>> ');
-                router.replace("/home")
+                console.log('connecté :>> ', response.data);
+
+                // Si la connexion est réussie, on sauvegarde le token
+                if (response.data.token) {
+                    await AsyncStorage.setItem('userToken', response.data.token); // Stockage du token
+                    router.replace("/home");
+                } else {
+                    Alert.alert('Erreur', 'Token non trouvé');
+                }
             }
-
-
         } catch (error) {
             console.log('error :>> ', error);
+            Alert.alert('Erreur', 'Identifiants incorrects ou problème avec le serveur');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
@@ -102,33 +109,33 @@ export default function Signin() {
                 style={styles.logo}
             />
 
-            <Text style={styles.title}>Connectez-vous à votre compte </Text>
+            <Text style={styles.title}>Connectez-vous à votre compte</Text>
 
             <View
                 style={[styles.inputContainer, styles.shadow]}
             >
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                selectionColor={Colors.vert}
-                keyboardType="email-address"
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-            />
-            {error.email && <CustomError />}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    selectionColor={Colors.vert}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                />
+                {error.email && <CustomError />}
             </View>
             <View
                 style={[styles.inputContainer, styles.shadow]}
             >
                 <TextInput
-                selectionColor={Colors.vert}
-                style={[styles.input]}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-            />
-            {error.password && <CustomError />}
+                    selectionColor={Colors.vert}
+                    style={[styles.input]}
+                    placeholder="Password"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                />
+                {error.password && <CustomError />}
             </View>
             <TouchableOpacity
                 style={styles.loginButton}
@@ -161,7 +168,7 @@ export default function Signin() {
                 <Text style={styles.linkText}>Créer un compte</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text style={styles.linkText}>Mot de passe oublié </Text>
+                <Text style={styles.linkText}>Mot de passe oublié</Text>
             </TouchableOpacity>
         </View>
     );
@@ -214,14 +221,10 @@ const styles = StyleSheet.create({
     },
 
     shadow: {
-        // Shadow properties for iOS
-
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
-
-        // Shadow properties for Android
         elevation: 20,
     },
 
@@ -262,16 +265,10 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderColor: 'grey',
         borderWidth: 0.2,
-
-
-        // Shadow properties for iOS
-
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
-
-        // Shadow properties for Android
         elevation: 2,
     },
     socialButtonText: {
@@ -287,4 +284,3 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
 });
-
