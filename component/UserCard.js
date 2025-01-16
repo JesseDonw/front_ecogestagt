@@ -39,11 +39,11 @@ const UserCard = ({ imageUrl, name, isOnline }) => {
   );
 };
 
-UserCard.propTypes = {
-  imageUrl: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  isOnline: PropTypes.bool.isRequired,
-};
+//UserCard.propTypes = {
+//  imageUrl: PropTypes.string.isRequired,
+//  name: PropTypes.string.isRequired,
+//  isOnline: PropTypes.bool.isRequired,
+//};
 
 const styles = StyleSheet.create({
   container: {
