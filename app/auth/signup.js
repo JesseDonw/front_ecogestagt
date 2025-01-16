@@ -108,18 +108,18 @@ export default function SignUp() {
       if (verifiedForm()) {
         setLoading(true);
         const data = {
-          nom_utilisateur: nom?.trim(),
-          prenom_utilisateur: prenom?.trim(),
-          mail_utilisateur: email?.trim(),
-          mdp_utilisateur: password?.trim(),
+          nom_agent: nom?.trim(),
+          prenom_agent: prenom?.trim(),
+          mail_agent: email?.trim(),
+          mdp_agent: password?.trim(),
         };
 
         console.log('data :>> ', data);
 
         // Assurez-vous d'utiliser l'URL correcte pour l'API
-        const response = await axios.post('https://f3b8-137-255-55-251.ngrok-free.app/api/register', data);
+        const response = await axios.post('https://f8fe-197-234-223-210.ngrok-free.app/api/register', data);
 
-        console.log('Utilisateur créé avec succès :>> ', response.data);
+        console.log('agent créé avec succès :>> ', response.data);
         router.replace('/auth/check');
       }
     } catch (error) {
@@ -127,10 +127,10 @@ export default function SignUp() {
       if (error.response && error.response.data.errors) {
         // Gérez les erreurs spécifiques renvoyées par le back-end ici
         setError({
-          nom: error.response.data.errors.nom_utilisateur || false,
-          prenom: error.response.data.errors.prenom_utilisateur || false,
-          email: error.response.data.errors.mail_utilisateur || false,
-          password: error.response.data.errors.mdp_utilisateur || false,
+          nom: error.response.data.errors.nom_agent || false,
+          prenom: error.response.data.errors.prenom_agent || false,
+          email: error.response.data.errors.mail_agent || false,
+          password: error.response.data.errors.mdp_agent || false,
         });
       }
     } finally {
