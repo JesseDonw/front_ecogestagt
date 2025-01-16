@@ -1,20 +1,24 @@
-import { Tabs } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import homeU from "../../assets/home_u.png"
 import homeS from "../../assets/home_s.png"
 import chatU from "../../assets/chat_u.png"
 import chatS from "../../assets/chat_s.png"
 import task from "../../assets/consult.png"
+import back from "../../assets/back.png"
 import person from "../../assets/person.png"
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Colors } from '../../constants/Colors';
-import { Platform } from 'react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default function TabsLayout() {
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
+                headerStyle: {
+                    backgroundColor: "transparent",
+                },
                 animation: "shift",
                 tabBarLabelPosition: "beside-icon",
                 tabBarLabel: ({ focused, color, children, position }) =>
@@ -31,7 +35,7 @@ export default function TabsLayout() {
                 </Text>),
                 tabBarActiveBackgroundColor: Colors.gradient33,
                 tabBarItemStyle: styles.tabBarItemStyle,
-                tabBarStyle: {...styles.tabBarStyle},
+                tabBarStyle: { ...styles.tabBarStyle },
             }}>
             <Tabs.Screen
                 name="home"
@@ -75,6 +79,19 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="chat"
                 options={{
+                    headerTitleContainerStyle: styles.dNone,
+                    headerLeft: () =>
+                        <Link href="/home" style={styles.wrapperBack}>
+                            <Entypo
+                                name="chevron-left"
+                                size={26}
+                                color={Colors.orange_foncer}
+                                style={styles.iconBack}
+                            />
+                        </Link>
+                    ,
+                    headerShown: true,
+                    headerShadowVisible: false,
                     title: 'Discussion',
                     tabBarIcon: ({ color, focused }) =>
                         focused ?
@@ -90,18 +107,19 @@ export default function TabsLayout() {
                     tabBarBadge: true,
                     tabBarBadgeStyle: styles.tabBarBadgeStyle,
                     tabBarLabel: ({ focused, color, children, position }) =>
-                        (<Text
-                            style={{
-                                display: focused ? "flex" : "none",
-                                fontFamily: "AbhayaLibreExtraBold",
-                                fontSize: 12,
-                                position: position,
-                                color: focused ? Colors.noir : color,
-                                marginRight:5
-                            }}
-                        >
-                            {children}
-                        </Text>),
+                    (<Text
+                        style={{
+                            display: focused ? "flex" : "none",
+                            fontFamily: "AbhayaLibreExtraBold",
+                            fontSize: 12,
+                            position: position,
+                            color: focused ? Colors.noir : color,
+                            marginRight: 5
+                        }}
+                    >
+                        {children}
+                    </Text>),
+                    tabBarStyle: styles.dNone,
                 }}
             />
         </Tabs>
@@ -148,7 +166,7 @@ const styles = StyleSheet.create({
         marginVertical: 7,
         borderRadius: 13,
         overflow: "hidden",
-        pressColor: 'transparent' 
+        pressColor: 'transparent'
     },
 
     tabBarStyle: {
@@ -158,4 +176,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         borderRadius: 22,
     },
+
+    wrapperBack: {
+        backgroundColor: Colors.orange+"50",
+        padding: 8,
+        marginLeft: 8,
+        borderRadius: 14,
+    },
+
+    dNone: {
+        display: "none"
+    }
 })
