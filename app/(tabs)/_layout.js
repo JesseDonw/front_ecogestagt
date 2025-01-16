@@ -16,6 +16,9 @@ export default function TabsLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
+                headerStyle: {
+                    backgroundColor: "transparent",
+                },
                 animation: "shift",
                 tabBarLabelPosition: "beside-icon",
                 tabBarLabel: ({ focused, color, children, position }) =>
