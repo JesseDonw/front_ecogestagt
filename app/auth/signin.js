@@ -82,17 +82,17 @@ export default function Signin() {
                 console.log('data :>> ', data);
 
                 // Envoi de la requête à l'API
-                const response = await axios.post('https://f8fe-197-234-223-210.ngrok-free.app/api/login', data);
+                //const response = await axios.post('https://f8fe-197-234-223-210.ngrok-free.app/api/login', data);
 
-                console.log('connecté :>> ', response.data);
+                //console.log('connecté :>> ', response.data);
 
                 // Si la connexion est réussie, on sauvegarde le token
-                if (response.data.token) {
-                    await AsyncStorage.setItem('userToken', response.data.token); // Stockage du token
-                    router.replace("/home");
-                } else {
-                    Alert.alert('Erreur', 'Token non trouvé');
-                }
+                //if (response.data.token) {
+                //    await AsyncStorage.setItem('userToken', response.data.token); // Stockage du token
+                //    router.replace("/home");
+                //} else {
+                //    Alert.alert('Erreur', 'Token non trouvé');
+                //}
             }
         } catch (error) {
             console.log('error :>> ', error);
