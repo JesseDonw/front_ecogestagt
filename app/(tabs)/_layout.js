@@ -79,7 +79,6 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="chat"
                 options={{
-                    headerTitleContainerStyle: styles.dNone,
                     headerLeft: () =>
                         <Link href="/home" style={styles.wrapperBack}>
                             <Entypo
@@ -92,6 +91,7 @@ export default function TabsLayout() {
                     ,
                     headerShown: true,
                     headerShadowVisible: false,
+                    headerTitleAlign: "center",
                     title: 'Discussion',
                     tabBarIcon: ({ color, focused }) =>
                         focused ?
