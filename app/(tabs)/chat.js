@@ -4,7 +4,6 @@ import UserCard from '../../component/UserCard';
 import RenderItemchat from "../../component/RenderItemchat";
 import Feather from '@expo/vector-icons/Feather';
 import { Colors } from "../../constants/Colors";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const mockMessages = [
   { id: '1', text: 'Salut, comment ça va ?', sender: 'Admin' },
