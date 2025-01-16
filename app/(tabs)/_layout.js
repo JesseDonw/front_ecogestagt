@@ -57,12 +57,26 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
+                    headerLeft: () =>
+                        <Link href="/home" style={styles.wrapperBack}>
+                            <Entypo
+                                name="chevron-left"
+                                size={26}
+                                color={Colors.orange_foncer}
+                                style={styles.iconBack}
+                            />
+                        </Link>
+                    ,
+                    headerShown: true,
+                    headerShadowVisible: false,
+
                     title: 'Profil',
                     tabBarIcon: ({ color, focused }) =>
                         <Image
                             source={person}
                             style={styles.profil}
-                        />
+                        />,
+                    tabBarStyle: styles.dNone,
                 }}
             />
             <Tabs.Screen
@@ -178,7 +192,7 @@ const styles = StyleSheet.create({
     },
 
     wrapperBack: {
-        backgroundColor: Colors.orange+"50",
+        backgroundColor: Colors.orange + "50",
         padding: 8,
         marginLeft: 8,
         borderRadius: 14,
