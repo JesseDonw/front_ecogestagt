@@ -117,7 +117,7 @@ export default function SignUp() {
         console.log('data :>> ', data);
 
         // Assurez-vous d'utiliser l'URL correcte pour l'API
-        const response = await axios.post('https://f8fe-197-234-223-210.ngrok-free.app/api/register', data);
+        const response = await axios.post('https://d7b3-197-234-221-25.ngrok-free.app/api/register', data);
 
         console.log('agent créé avec succès :>> ', response.data);
         router.replace('/auth/check');
