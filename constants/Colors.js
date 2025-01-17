@@ -6,6 +6,7 @@ export const Colors = {
     gradient: "#53E88B",
     gradient_foncer: "#15BE77",
     noir: "#09051C",
+    noir18: "#181818",
     noir_fondu: "#3B3B3B",
     gris_foncer: "#D9D9D9",
     gris: "#F6F6F6",
