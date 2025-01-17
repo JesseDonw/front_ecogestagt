@@ -1,5 +1,5 @@
 import react, { useState } from "react";
-import { StyleSheet, View, TextInput, Button, FlatList, Pressable } from 'react-native';
+import { StyleSheet, View, TextInput, Button, FlatList, Pressable, KeyboardAvoidingView } from 'react-native';
 import UserCard from '../../component/UserCard';
 import RenderItemchat from "../../component/RenderItemchat";
 import Feather from '@expo/vector-icons/Feather';
