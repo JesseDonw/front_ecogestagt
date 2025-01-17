@@ -24,7 +24,6 @@ export default function TaskCompletedScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Tâche accomplies</Text>
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}
@@ -40,14 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingVertical: 15,
-    color: "#fff",
-    backgroundColor: "#28a745", // Couleur verte personnalisée
-  },
+
   listContent: {
     padding: 15,
   },
