@@ -23,7 +23,7 @@ export default function Layout() {
       }, [loaded]);
     
       if (!loaded) {
-        return null; 
+        return <StatusBar style="auto" />; 
       }
 
     return(
