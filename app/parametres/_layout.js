@@ -1,12 +1,13 @@
-import { Link, Tabs, Stack } from 'expo-router';
+import { useRouter, Link, Tabs, Stack } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import Entypo from '@expo/vector-icons/Entypo';
-
+import Header from '../../component/Header';
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Colors } from '../../constants/Colors';
 
 
 export default function ParamLayout() {
+    const router = useRouter();
     return <Stack screenOptions={{
         headerStyle: {
             backgroundColor: Colors.vert,
@@ -22,51 +23,37 @@ export default function ParamLayout() {
         <Stack.Screen
             name="parametre"
             options={{
-                title: 'Paramètre',
-                headerLeft: () =>
-                    <Link href="/profile" style={styles.wrapperBack}>
-                        <Entypo
-                            name="chevron-left"
-                            size={26}
-                            color={Colors.orange_foncer}
-                            style={styles.iconBack}
-                        />
-                    </Link>
-
-
+                header: () => (
+                    <Header
+                        title='Paramètre'
+                        onBack={() => router.push('/profile')}
+                    />
+                ),
             }}
         />
 
         <Stack.Screen
             name="accomplis"
             options={{
-                title: 'Tâche accomplis',
-                headerLeft: () =>
-                    <Link href="/profile" style={styles.wrapperBack}>
-                        <Entypo
-                            name="chevron-left"
-                            size={26}
-                            color={Colors.orange_foncer}
-                            style={styles.iconBack}
-                        />
-                    </Link>
-
+                header: () => (
+                    <Header
+                        title="Tâche accomplis"
+                        onBack={() => router.push('/profile')}
+                    />
+                ),
             }}
         />
+
 
         <Stack.Screen
             name="modif_mdp"
             options={{
-                title: 'Changer le mot de passe',
-                headerLeft: () =>
-                    <Link href="/parametres/parametre" style={styles.wrapperBack}>
-                        <Entypo
-                            name="chevron-left"
-                            size={26}
-                            color={Colors.orange_foncer}
-                            style={styles.iconBack}
-                        />
-                    </Link>
+                header: () => (
+                    <Header
+                        title='Changer le mot de passe'
+                        onBack={() => router.push('/parametres/parametre')}
+                    />
+                ),
 
 
             }}
@@ -75,16 +62,12 @@ export default function ParamLayout() {
         <Stack.Screen
             name="modif_profil"
             options={{
-                title: 'Modification du profil',
-                headerLeft: () =>
-                    <Link href="/parametres/parametre" style={styles.wrapperBack}>
-                        <Entypo
-                            name="chevron-left"
-                            size={26}
-                            color={Colors.orange_foncer}
-                            style={styles.iconBack}
-                        />
-                    </Link>
+                header: () => (
+                    <Header
+                        title='Modification du profil'
+                        onBack={() => router.push('/parametres/parametre')}
+                    />
+                ),
 
 
             }}
@@ -95,11 +78,6 @@ export default function ParamLayout() {
 const styles = StyleSheet.create({
 
 
-    wrapperBack: {
-        padding: 8,
-        marginLeft: 8,
-        borderRadius: 14,
-    },
 
 
 })
