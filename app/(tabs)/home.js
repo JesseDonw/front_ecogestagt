@@ -2,44 +2,39 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Colors } from '../../constants/Colors';
 import { BarChart } from 'react-native-chart-kit';
+import person from '../../assets/pers.png';
+import ProfilCard from '../../component/ProfilCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '../../constants/Colors';
 
 export default function App() {
   const router = useRouter();
 
   // Liste des villes
   const [cities, setCities] = useState([
-    { id: 1, name: 'CALAVI', data: [50, 20, 10, 30, 40] },
-    { id: 2, name: 'COTONOU', data: [30, 40, 20, 60, 80] },
-    { id: 3, name: 'SEME-PODJI', data: [70, 50, 30, 90, 100] },
-    { id: 4, name: 'OUIDAH', data: [20, 30, 10, 50, 60] },
-    { id: 5, name: 'ABOMEY', data: [10, 70, 60, 30, 40] },
+    { id: 1, name: 'CALAVI', thisWeek: [50, 20, 10, 30, 40], lastWeek: [30, 40, 20, 25, 35] },
+    { id: 2, name: 'COTONOU', thisWeek: [30, 40, 20, 60, 80], lastWeek: [20, 25, 15, 50, 60] },
+    { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100], lastWeek: [60, 45, 25, 80, 90] },
+    { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60], lastWeek: [15, 25, 5, 40, 50] },
+    { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40], lastWeek: [5, 60, 50, 20, 30] },
   ]);
 
   const [selectedCity, setSelectedCity] = useState(cities[0]); // Ville sélectionnée
 
   return (
-    <View style={styles.container}>
-      {/* Profil utilisateur */}
-      <View style={styles.profileContainer}>
-        <Text style={styles.welcomeText}>Welcome Back!</Text>
-        <View style={styles.profileDetails}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/100' }} // Remplacez par l'URL de votre image
-            style={styles.profileImage}
-          />
-          <View>
-            <Text style={styles.profileName}>Jesse DONWAHOUE</Text>
-          </View>
-        </View>
-      </View>
+    <SafeAreaView style={styles.safeAreaView}>
+         <View style={styles.container}>
 
+<ProfilCard
+  welText="Welcome Back!"
+  userName='jesse DONWAHOUE'
+/>
       {/* Barre de recherche */}
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color="gray" style={styles.searchIcon} />
         <TextInput placeholder="Search tasks" style={styles.searchInput} />
-        <Ionicons name="notifications-outline" size={20} color={Colors.vert} style={styles.notificationIcon} />
+        <Ionicons name="notifications-outline" size={20} color="green" style={styles.notificationIcon} />
       </View>
 
       {/* Liste des villes */}
@@ -78,7 +73,10 @@ export default function App() {
         <BarChart
           data={{
             labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
-            datasets: [{ data: selectedCity.data }],
+            datasets: [
+              { data: selectedCity.thisWeek, color: () => 'rgba(255, 99, 132, 1)' }, // Rouge
+              { data: selectedCity.lastWeek, color: () => 'rgba(0, 0, 0, 1)' }, // Noir
+            ],
           }}
           width={350}
           height={200}
@@ -88,52 +86,56 @@ export default function App() {
             backgroundGradientTo: '#fff',
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: () => 'gray',
-            barPercentage: 0.7,
+            barPercentage: 0.5,
           }}
           style={styles.chart}
+          showBarTops={false}
         />
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+
+  safeAreaView: {
+    flex:1,
+    width:"100%",
+
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+   
     padding: 20,
   },
-  profileContainer: {
+
+
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-    backgroundColor: '#f4f4f4',
-    padding: 20,
-    borderRadius: 15,
   },
   welcomeText: {
-    fontSize: 18,
-    color: Colors.vert,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 16,
+    color: '#2E8B57',
+    fontWeight: '600',
   },
-  profileDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  profileName: {
+  userName: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#000',
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f4f4f4',
+    backgroundColor: Colors.vert_rech,
     borderRadius: 15,
     paddingHorizontal: 10,
     marginVertical: 20,
@@ -144,7 +146,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    fontFamily: 'AbhayaLibreExtraBold',
   },
   notificationIcon: {
     marginLeft: 10,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cityButton: {
-    backgroundColor: Colors.vert,
+    backgroundColor: 'green',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -163,7 +164,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#004d40',
   },
   cityButtonText: {
-    fontFamily: 'AbhayaLibreExtraBold',
     color: '#fff',
     fontSize: 16,
   },
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   chartLegend: {
-    fontFamily: 'AbhayaLibreExtraBold',
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10,
