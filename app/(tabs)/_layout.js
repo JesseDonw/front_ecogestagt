@@ -140,7 +140,9 @@ export default function TabsLayout() {
                     tabBarStyle: styles.dNone,
                 }}
             />
+             
         </Tabs>
+        
     );
 }
 
