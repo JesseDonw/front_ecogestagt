@@ -54,31 +54,35 @@ export default function TabsLayout() {
                             />
                 }}
             />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    headerLeft: () =>
-                        <Link href="/home" style={styles.wrapperBack}>
-                            <Entypo
-                                name="chevron-left"
-                                size={26}
-                                color={Colors.orange_foncer}
-                                style={styles.iconBack}
-                            />
-                        </Link>
-                    ,
-                    headerShown: true,
-                    headerShadowVisible: false,
+           <Tabs.Screen
+    name="profile"
+    options={{
+        headerLeft: () =>
+            <Link href="/home" style={styles.wrapperBack}>
+                <Entypo
+                    name="chevron-left"
+                    size={26}
+                    color={Colors.orange_foncer}
+                    style={styles.iconBack}
+                />
+            </Link>
+        ,
+        headerShown: true,
+        headerShadowVisible: false,
+        title: 'Profil',
+        headerTitleStyle: {
+            fontFamily: "AbhayaLibreExtraBold", // Police personnalisée
+            fontSize: 25, // Taille de police personnalisée
+        },
+        tabBarIcon: ({ color, focused }) =>
+            <Image
+                source={person}
+                style={styles.profil}
+            />,
+        tabBarStyle: styles.dNone,
+    }}
+/>
 
-                    title: 'Profil',
-                    tabBarIcon: ({ color, focused }) =>
-                        <Image
-                            source={person}
-                            style={styles.profil}
-                        />,
-                    tabBarStyle: styles.dNone,
-                }}
-            />
             <Tabs.Screen
                 name="task"
                 options={{
