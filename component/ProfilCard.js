@@ -5,44 +5,46 @@ import { useRouter } from 'expo-router';
 import { BarChart } from 'react-native-chart-kit';
 import person from '../assets/pers.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import glassman from "../assets/glassman.png"
+import { Colors } from '../constants/Colors';
 
-export default function  ProfilCard(props){
-    const {welText,userName,userImage}=props
-    return(<View style={styles.header}>
-        
-            <View>
-              <Text style={styles.welcomeText}>{welText}</Text>
-              <Text style={styles.userName}>{userName}</Text>
-            </View>
-            <Image
-              source={userImage ? person : {uri:userImage}}
-              style={styles.profileImage}
-            />
-          </View>)
+export default function ProfilCard(props) {
+  const { welText = "", userName = "", userImage = null } = props
+  return (<View style={styles.header}>
+    <View>
+      <Text style={styles.welcomeText}>{welText}</Text>
+      <Text style={styles.userName}>{userName}</Text>
+    </View>
+    <Image
+      source={userImage ? { uri: userImage } : person }
+      style={styles.profileImage}
+    />
+  </View>)
 }
 
 const styles = StyleSheet.create({
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 20,
-    },
-    welcomeText: {
-      fontSize: 16,
-      color: '#2E8B57',
-      fontWeight: '600',
-    },
-    userName: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: '#000',
-    },
-    profileImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-    },
-    
-  });
-  
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  welcomeText: {
+    fontFamily: "AbhayaLibreMedium",
+    fontSize: 16,
+    color: Colors.vert_select,
+  },
+  userName: {
+    fontFamily: "AbhayaLibreExtraBold",
+    fontSize: 20,
+    color: '#000',
+    textTransform: "capitalize"
+  },
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "transparent"
+  },
+
+});

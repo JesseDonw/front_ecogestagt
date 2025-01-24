@@ -7,7 +7,7 @@ import chatS from "../../assets/chat_s.png"
 import task from "../../assets/consult.png"
 import back from "../../assets/back.png"
 import person from "../../assets/person.png"
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Pressable } from "react-native";
 import { Colors } from '../../constants/Colors';
 import Entypo from '@expo/vector-icons/Entypo';
 
@@ -36,6 +36,9 @@ export default function TabsLayout() {
                 tabBarActiveBackgroundColor: Colors.gradient33,
                 tabBarItemStyle: styles.tabBarItemStyle,
                 tabBarStyle: { ...styles.tabBarStyle },
+                tabBarButton: (props) => <Pressable {...props} 
+                android_ripple={{color: Colors.gradient33}} 
+                unstable_pressDelay={0}/>
             }}>
             <Tabs.Screen
                 name="home"

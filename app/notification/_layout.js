@@ -11,42 +11,42 @@ export default function NotifLayout() {
     const router = useRouter();
 
     return <Stack screenOptions={{
-       
-        headerLeft: () =>
-            <Link href="/home" style={styles.wrapperBack}>
-                <Entypo
-                    name="chevron-left"
-                    size={26}
-                    color={Colors.orange_foncer}
-                    style={styles.iconBack}
-                />
-            </Link>,
             headerTitleStyle: {
-                fontFamily: "AbhayaLibreExtraBold", // Police personnalisée
-                fontSize: 25, // Taille de police personnalisée
-            },
-            
-
-        
-       
+            fontFamily: "AbhayaLibreExtraBold",
+            fontSize: 25,
+        },
     }} >
-          <Stack.Screen
-                    name="notif"
-                    options={{
-                       
-                     title: "Notification"
-                              
-                    }}
-                />
-        
+        <Stack.Screen
+            name="notif"
+            options={{
+                title: "Notification",
+                headerTitleAlign: "center",
+                headerLeft: () =>
+                    <Link href="/home" style={styles.wrapperBack}>
+                        <Entypo
+                            name="chevron-left"
+                            size={26}
+                            color={Colors.orange_foncer}
+                            onPress={()=> {
+                                router.back()
+                            }}
+                        />
+                    </Link>,
+            }}
+        />
+
     </Stack>
-        
-   
+
+
 
 }
 const styles = StyleSheet.create({
-
-
+    wrapperBack: {
+        backgroundColor: Colors.orange + "50",
+        padding: 8,
+        marginLeft: 2,
+        borderRadius: 14,
+    },
 
 
 })

@@ -24,75 +24,82 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-         <View style={styles.container}>
-
-<ProfilCard
-  welText="Welcome Back!"
-  userName='jesse DONWAHOUE'
-/>
-      {/* Barre de recherche */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="gray" style={styles.searchIcon} />
-        <TextInput placeholder="Search tasks" style={styles.searchInput} />
-        <Ionicons name="notifications-outline" size={20} color="green" style={styles.notificationIcon} />
-      </View>
-
-      {/* Liste des villes */}
-      <FlatList
-        data={cities}
-        keyExtractor={(item) => item.id.toString()}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.cityList}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.cityButton,
-              item.id === selectedCity.id && styles.cityButtonSelected,
-            ]}
-            onPress={() => setSelectedCity(item)}
-          >
-            <Text
-              style={[
-                styles.cityButtonText,
-                item.id === selectedCity.id && styles.cityButtonTextSelected,
-              ]}
-            >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-
-      {/* Graphique */}
-      <View style={styles.chartContainer}>
-        <Text style={styles.chartLegend}>
-          <Text style={{ color: 'red' }}>● Collecte réalisée cette semaine</Text>{' '}
-          <Text style={{ color: 'black' }}>● Collecte réalisée les semaines précédentes</Text>
-        </Text>
-        <BarChart
-          data={{
-            labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
-            datasets: [
-              { data: selectedCity.thisWeek, color: () => 'rgba(255, 99, 132, 1)' }, // Rouge
-              { data: selectedCity.lastWeek, color: () => 'rgba(0, 0, 0, 1)' }, // Noir
-            ],
-          }}
-          width={350}
-          height={200}
-          fromZero
-          chartConfig={{
-            backgroundGradientFrom: '#fff',
-            backgroundGradientTo: '#fff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: () => 'gray',
-            barPercentage: 0.5,
-          }}
-          style={styles.chart}
-          showBarTops={false}
+      <View style={styles.container}>
+        <ProfilCard
+          welText="Bienvenue!"
+          userName='jesse DONWAHOUE'
         />
+        {/* Barre de recherche */}
+        <View style={styles.searchContainerWrapper}>
+          <View style={styles.searchContainer}>
+            <Ionicons name="search-outline" size={20} color={Colors.vert_select} style={styles.searchIcon} />
+            <TextInput placeholder="Rechercher une tâche" style={styles.searchInput} />
+          </View>
+          <Ionicons
+            name="notifications-outline"
+            size={22}
+            color={Colors.gradient}
+            style={styles.notificationIcon}
+            onPress={() => router.push("/notification/notif")}
+          />
+        </View>
+
+        {/* Liste des villes */}
+        <FlatList
+          data={cities}
+          keyExtractor={(item) => item.id.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cityList}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.cityButton,
+                item.id === selectedCity.id && styles.cityButtonSelected,
+              ]}
+              onPress={() => setSelectedCity(item)}
+            >
+              <Text
+                style={[
+                  styles.cityButtonText,
+                  item.id === selectedCity.id && styles.cityButtonTextSelected,
+                ]}
+              >
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+
+        {/* Graphique */}
+        <View style={styles.chartContainer}>
+          <Text style={styles.chartLegend}>
+            <Text style={{ color: 'red' }}>● Collecte réalisée cette semaine</Text>{' '}
+            <Text style={{ color: 'black' }}>● Collecte réalisée les semaines précédentes</Text>
+          </Text>
+          <BarChart
+            data={{
+              labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
+              datasets: [
+                { data: selectedCity.thisWeek, color: () => 'rgba(255, 99, 132, 1)' }, // Rouge
+                { data: selectedCity.lastWeek, color: () => 'rgba(0, 0, 0, 1)' }, // Noir
+              ],
+            }}
+            width={350}
+            height={200}
+            fromZero
+            chartConfig={{
+              backgroundGradientFrom: '#fff',
+              backgroundGradientTo: '#fff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: () => 'gray',
+              barPercentage: 0.5,
+            }}
+            style={styles.chart}
+            showBarTops={false}
+          />
+        </View>
       </View>
-    </View>
     </SafeAreaView>
   );
 }
@@ -100,55 +107,46 @@ export default function App() {
 const styles = StyleSheet.create({
 
   safeAreaView: {
-    flex:1,
-    width:"100%",
-
+    flex: 1,
+    width: "100%",
+    fontFamily: "AbhayaLibreRegular",
   },
   container: {
     flex: 1,
-   
+
     padding: 20,
   },
 
-
-  header: {
+  searchContainerWrapper: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 20,
   },
-  welcomeText: {
-    fontSize: 16,
-    color: '#2E8B57',
-    fontWeight: '600',
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
+
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.vert_rech,
     borderRadius: 15,
     paddingHorizontal: 10,
-    marginVertical: 20,
+    flex: 1,
   },
   searchIcon: {
     marginRight: 10,
   },
   searchInput: {
-    flex: 1,
     height: 40,
+    flex: 1,
+    fontFamily: "AbhayaLibreRegular",
+    fontSize: 15,
+    lineHeight: 15,
+    paddingRight: 8,
   },
   notificationIcon: {
-    marginLeft: 10,
+    backgroundColor: Colors.gris_notif,
+    padding: 8.1,
+    borderRadius: 15,
+    marginHorizontal: 4
   },
   cityList: {
     marginBottom: 20,
