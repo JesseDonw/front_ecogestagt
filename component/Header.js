@@ -35,17 +35,19 @@ export default function Header({ title, onBack, rightButton }) {
 
 const styles = StyleSheet.create({
     SafeAreaView:{
-        paddingBottom:-40,
-        paddingTop:-10,
-        backgroundColor: Colors.vert,
+       // paddingBottom:-40,
+       // paddingTop:-10,
+       backgroundColor: Colors.vert,
     },
     headerContainer: {
-        height: 60,
+        // height: 60,
         backgroundColor: Colors.vert,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
+        paddingTop: 4,
+        paddingBottom: 8,
         borderBottomLeftRadius: 17,
         borderBottomRightRadius: 17,
     },
@@ -59,7 +61,6 @@ const styles = StyleSheet.create({
         color: 'black',
         flex: 1,
         textAlign: 'center',
-       
     },
     rightButton: {
         padding: 8,

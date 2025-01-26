@@ -7,6 +7,7 @@ import person from '../../assets/pers.png';
 import ProfilCard from '../../component/ProfilCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
+import { Badge } from 'react-native-paper';
 
 export default function App() {
   const router = useRouter();
@@ -35,13 +36,17 @@ export default function App() {
             <Ionicons name="search-outline" size={20} color={Colors.vert_select} style={styles.searchIcon} />
             <TextInput placeholder="Rechercher une tâche" style={styles.searchInput} />
           </View>
-          <Ionicons
+
+          <View style={{position: "relative"}}>
+            <Ionicons
             name="notifications-outline"
             size={22}
             color={Colors.gradient}
             style={styles.notificationIcon}
             onPress={() => router.push("/notification/notif")}
           />
+          <Badge size={19} style={{position:"absolute", top: 0, right:0, backgroundColor: Colors.danger}} visible={true}>3</Badge>
+          </View>
         </View>
 
         {/* Liste des villes */}
@@ -146,7 +151,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gris_notif,
     padding: 8.1,
     borderRadius: 15,
-    marginHorizontal: 4
+    marginHorizontal: 4,
+    position: "relative"
   },
   cityList: {
     marginBottom: 20,
