@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TextInput, FlatList, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserCard from '../../component/UserCard';
 import RenderItemchat from "../../component/RenderItemchat";
 import Feather from '@expo/vector-icons/Feather';
@@ -7,13 +8,27 @@ import { Colors } from "../../constants/Colors";
 import { fetchMessages, sendMessageToAPI } from '../../component/chatService';
 
 const conversationId = 1; // ID de conversation (à récupérer dynamiquement)
-const agentId = 2; // ID de l'agent connecté
 
 export default function Discussion() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [agentId, setAgentId] = useState(null);
 
+  // Fonction pour récupérer l'ID de l'agent depuis AsyncStorage
+  const getAgentIdFromStorage = async () => {
+    try {
+      const storedAgentId = await AsyncStorage.getItem('agentId');
+      if (storedAgentId) {
+        setAgentId(parseInt(storedAgentId, 10));
+      } else {
+        console.warn("Agent ID non trouvé dans le stockage.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'agent ID :", error);
+    }
+  };
+  
   // Fonction pour charger les messages
   const loadMessages = async () => {
     try {
@@ -34,6 +49,7 @@ export default function Discussion() {
   };
 
   useEffect(() => {
+    getAgentIdFromStorage();
     loadMessages();
 
     // Met en place un intervalle pour vérifier les nouveaux messages toutes les 5 secondes
@@ -46,7 +62,7 @@ export default function Discussion() {
   }, []);
 
   const sendMessage = async () => {
-    if (message.trim()) {
+    if (message.trim() && agentId) {
       const newMessage = {
         id: Math.random().toString(),
         text: message,
@@ -60,11 +76,13 @@ export default function Discussion() {
         setMessage('');
         loadMessages(); // Recharge immédiatement après envoi
       } catch (error) {
-        console.error("Erreur lors de l'envoi du meassage :", error);
+        console.error("Erreur lors de l'envoi du message :", error);
       }
+    } else {
+      console.warn("Message vide ou agent ID non défini.");
     }
   };
-
+ 
   return (
     <KeyboardAvoidingView 
       style={styles.container}
