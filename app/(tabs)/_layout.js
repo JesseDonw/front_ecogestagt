@@ -36,9 +36,9 @@ export default function TabsLayout() {
                 tabBarActiveBackgroundColor: Colors.gradient33,
                 tabBarItemStyle: styles.tabBarItemStyle,
                 tabBarStyle: { ...styles.tabBarStyle },
-                tabBarButton: (props) => <Pressable {...props} 
-                android_ripple={{color: Colors.gradient33}} 
-                unstable_pressDelay={0}/>
+                tabBarButton: (props) => <Pressable {...props}
+                    android_ripple={{ color: Colors.gradient33 }}
+                    unstable_pressDelay={0} />
             }}>
             <Tabs.Screen
                 name="home"
@@ -57,39 +57,57 @@ export default function TabsLayout() {
                             />
                 }}
             />
-           <Tabs.Screen
-    name="profile"
-    options={{
-        headerLeft: () =>
-            <Link href="/home" style={styles.wrapperBack}>
-                <Entypo
-                    name="chevron-left"
-                    size={26}
-                    color={Colors.orange_foncer}
-                    style={styles.iconBack}
-                />
-            </Link>
-        ,
-        headerShown: true,
-        headerShadowVisible: false,
-        title: 'Profil',
-        headerTitleStyle: {
-            fontFamily: "AbhayaLibreExtraBold", // Police personnalisée
-            fontSize: 25, // Taille de police personnalisée
-        },
-        tabBarIcon: ({ color, focused }) =>
-            <Image
-                source={person}
-                style={styles.profil}
-            />,
-        tabBarStyle: styles.dNone,
-    }}
-/>
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    headerLeft: () =>
+                        <Link href="/home" style={styles.wrapperBack}>
+                            <Entypo
+                                name="chevron-left"
+                                size={26}
+                                color={Colors.orange_foncer}
+                                style={styles.iconBack}
+                            />
+                        </Link>
+                    ,
+                    headerShown: true,
+                    headerShadowVisible: false,
+                    title: 'Profil',
+                    headerTitleStyle: {
+                        fontFamily: "AbhayaLibreExtraBold", // Police personnalisée
+                        fontSize: 25, // Taille de police personnalisée
+                    },
+                    tabBarIcon: ({ color, focused }) =>
+                        <Image
+                            source={person}
+                            style={styles.profil}
+                        />,
+                    tabBarStyle: styles.dNone,
+                }}
+            />
 
             <Tabs.Screen
                 name="task"
                 options={{
+                    headerTitle: 'Tâches du jour',
+                    headerTitleAlign: 'center',
                     title: 'Tâches',
+                    headerLeft: () =>
+                        <Link href="/home" style={styles.wrapperBack}>
+                            <Entypo
+                                name="chevron-left"
+                                size={26}
+                                color={Colors.orange_foncer}
+                                style={styles.iconBack}
+                            />
+                        </Link>
+                    ,
+                    headerShown: true,
+                    headerShadowVisible: false,
+                    headerTitleStyle: {
+                        fontFamily: "AbhayaLibreExtraBold", // Police personnalisée
+                        fontSize: 25, // Taille de police personnalisée
+                    },
                     tabBarIcon: ({ color, focused }) =>
                         <Image
                             source={task}
@@ -143,9 +161,9 @@ export default function TabsLayout() {
                     tabBarStyle: styles.dNone,
                 }}
             />
-             
+
         </Tabs>
-        
+
     );
 }
 

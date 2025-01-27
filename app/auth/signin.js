@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     },
     linkText: {
         fontFamily: "AbhayaLibreExtraBold",
-        color: '#008000',
+        color: Colors.vert,
         textDecorationLine: 'underline',
         marginTop: 10,
         fontSize: 14,

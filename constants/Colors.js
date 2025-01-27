@@ -1,6 +1,7 @@
 
 
 export const Colors = {
+    white: "#ffffff",
     vert: "#01712B",
     gradient33: "#53E88C38",
     gradient: "#53E88B",
