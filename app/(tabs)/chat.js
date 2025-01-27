@@ -46,6 +46,7 @@ export default function Discussion() {
       <View style={styles.chatWrapper}>
         <FlatList
           data={messages}
+          showsVerticalScrollIndicator={false}
           renderItem={RenderItemchat}
           keyExtractor={(item) => item.id}
           inverted

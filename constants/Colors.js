@@ -16,5 +16,8 @@ export const Colors = {
     orange_foncer: "#DA6317",
     danger: "#dc3545",
     vert_rech: "#E8FCF4",
-    gris_notif: "#FDFCFA"
+    gris_notif: "#FDFCFA",
+    redGraph: "#EB5B52",
+    blackGraph: "#292927",
+    graphBackground: "#FDF5ED"
 }

@@ -2,23 +2,24 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { BarChart } from 'react-native-chart-kit';
+// import { BarChart } from 'react-native-chart-kit';
 import person from '../../assets/pers.png';
 import ProfilCard from '../../component/ProfilCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import { Badge } from 'react-native-paper';
+import BarChart from '../../component/BarChart';
 
 export default function App() {
   const router = useRouter();
 
   // Liste des villes
   const [cities, setCities] = useState([
-    { id: 1, name: 'CALAVI', thisWeek: [50, 20, 10, 30, 40], lastWeek: [30, 40, 20, 25, 35] },
-    { id: 2, name: 'COTONOU', thisWeek: [30, 40, 20, 60, 80], lastWeek: [20, 25, 15, 50, 60] },
-    { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100], lastWeek: [60, 45, 25, 80, 90] },
-    { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60], lastWeek: [15, 25, 5, 40, 50] },
-    { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40], lastWeek: [5, 60, 50, 20, 30] },
+    { id: 1, name: 'CALAVI', thisWeek: [50, 20, 10, 30, 40, 7, 7], lastWeek: [30, 40, 20, 25, 35, 30, 40, 20, 25, 35, 30, 40, 20, 25] },
+    { id: 2, name: 'COTONOU', thisWeek: [30, 40, 20, 60, 80, 7, 7], lastWeek: [20, 25, 15, 50, 60, 20, 25, 15, 50, 60, 20, 25, 15, 50] },
+    { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
+    { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
+    { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
   ]);
 
   const [selectedCity, setSelectedCity] = useState(cities[0]); // Ville sélectionnée
@@ -53,8 +54,7 @@ export default function App() {
         <FlatList
           data={cities}
           keyExtractor={(item) => item.id.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.cityList}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -79,10 +79,17 @@ export default function App() {
         {/* Graphique */}
         <View style={styles.chartContainer}>
           <Text style={styles.chartLegend}>
-            <Text style={{ color: 'red' }}>● Collecte réalisée cette semaine</Text>{' '}
-            <Text style={{ color: 'black' }}>● Collecte réalisée les semaines précédentes</Text>
+            <Text style={[styles.legendText, { color: Colors.redGraph}]}>● Collecte réalisée cette semaine</Text>{'\n'}
+            <Text style={[styles.legendText, { color: Colors.blackGraph}]}>● Collecte réalisée les semaines précédentes</Text>
           </Text>
           <BarChart
+          previousData={selectedCity.lastWeek}
+          currentData={selectedCity.thisWeek}
+          barWidth={3.06}
+          barSpacing={11}
+          cornerRadius={3.06}
+          />
+          {/* <BarChart
             data={{
               labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
               datasets: [
@@ -102,7 +109,7 @@ export default function App() {
             }}
             style={styles.chart}
             showBarTops={false}
-          />
+          /> */}
         </View>
       </View>
     </SafeAreaView>
@@ -125,7 +132,7 @@ const styles = StyleSheet.create({
   searchContainerWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 18,
   },
 
   searchContainer: {
@@ -170,19 +177,27 @@ const styles = StyleSheet.create({
   cityButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontFamily: "AbhayaLibreRegular",
   },
   cityButtonTextSelected: {
     color: '#f4f4f4',
   },
   chartContainer: {
     marginTop: 20,
+    backgroundColor: Colors.graphBackground,
+    borderRadius: 16,
+    paddingTop: 8
   },
   chartLegend: {
-    fontSize: 14,
     textAlign: 'center',
-    marginBottom: 10,
+    marginVertical: 5,
   },
   chart: {
     borderRadius: 15,
   },
+  legendText: {
+    fontFamily: "AbhayaLibreRegular",
+    fontSize: 14,
+    lineHeight: 14
+  }
 });
