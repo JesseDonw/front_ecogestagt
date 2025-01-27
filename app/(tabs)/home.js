@@ -103,7 +103,7 @@ export default function App() {
             chartConfig={{
               backgroundGradientFrom: '#fff',
               backgroundGradientTo: '#fff',
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => rgba(0, 0, 0, ${opacity}),
               labelColor: () => 'gray',
               barPercentage: 0.5,
             }}

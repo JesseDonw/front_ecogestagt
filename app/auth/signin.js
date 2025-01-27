@@ -35,7 +35,7 @@ export default function Signin() {
     };
 
     useEffect(() => {
-        if(email){
+        if (email) {
             setError((e) => ({
                 ...e,
                 email: false
@@ -44,7 +44,7 @@ export default function Signin() {
     }, [email]);
 
     useEffect(() => {
-        if(password){
+        if (password) {
             setError((e) => ({
                 ...e,
                 password: false
@@ -82,18 +82,19 @@ export default function Signin() {
                 console.log('data :>> ', data);
                 router.replace("/home");
 
-                // Envoi de la requête à l'API
-                //const response = await axios.post('https://f8fe-197-234-223-210.ngrok-free.app/api/login', data);
+                //Envoi de la requête à l'API
+                const response = await axios.post('https://c63c-197-234-219-41.ngrok-free.app/api/login', data);
 
-                //console.log('connecté :>> ', response.data);
+                console.log('connecté :>> ', response.data);
 
                 // Si la connexion est réussie, on sauvegarde le token
-                //if (response.data.token) {
-                //    await AsyncStorage.setItem('userToken', response.data.token); // Stockage du token
-                //    router.replace("/home");
-                //} else {
-                //    Alert.alert('Erreur', 'Token non trouvé');
-                //}
+                if (response.data.token) {
+                    await AsyncStorage.setItem('userToken', response.data.token);
+                    await AsyncStorage.setItem('agentId', response.data.agent_id);  // Stockage du token
+                    router.replace("/home");
+                } else {
+                    Alert.alert('Erreur', 'Token non trouvé');
+                }
             }
         } catch (error) {
             console.log('error :>> ', error);

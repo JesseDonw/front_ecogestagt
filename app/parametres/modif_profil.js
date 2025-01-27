@@ -3,9 +3,11 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ActivityInd
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from 'react-native-picker-select';
 import { Colors } from '../../constants/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Modif() {
   const [image, setImage] = useState(null);
@@ -18,8 +20,21 @@ export default function Modif() {
     sexe: '',
     dateNaissance: ''
   });
+  const [editingField, setEditingField] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const storedProfile = await AsyncStorage.getItem('userProfile');
+      if (storedProfile) {
+        const profileData = JSON.parse(storedProfile);
+        setFormData(profileData);
+        setImage(profileData.image);
+      }
+    };
+    loadProfile();
+  }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -51,34 +66,34 @@ export default function Modif() {
 
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
-      setShowDatePicker(false);
       setFormData({ ...formData, dateNaissance: selectedDate.toLocaleDateString() });
+      setShowDatePicker(false);
     }
   };
 
   const validateFields = () => {
-    if (!formData.nom || !formData.prenom || !formData.email || !formData.bio || !formData.sexe || !formData.dateNaissance) {
-      setErrorMessage('Veuillez remplir tous les champs');
-      return false;
-    }
-    if (errorMessage) {
+    if (!formData.nom || !formData.prenom || !formData.email || !formData.sexe || !formData.dateNaissance) {
+      setErrorMessage('Veuillez remplir tous les champs obligatoires');
       return false;
     }
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateFields()) return;
 
     setLoading(true);
     try {
-      // Simulating profile update process
-      setTimeout(() => {
-        Alert.alert('Succès', 'Profil mis à jour avec succès.');
-        setLoading(false);
-      }, 1500);
+      const updatedProfile = {
+        ...formData,
+        image: image || formData.image,
+      };
+
+      await AsyncStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+      Alert.alert('Succès', 'Profil mis à jour avec succès.');
     } catch (error) {
       Alert.alert('Erreur', 'Une erreur est survenue lors de la mise à jour du profil.');
+    } finally {
       setLoading(false);
     }
   };
@@ -101,44 +116,57 @@ export default function Modif() {
 
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-        <TextInput
-          placeholder="Nom"
-          style={styles.input}
-          value={formData.nom}
-          onChangeText={(text) => handleInputChange('nom', text)}
-        />
+        {['nom', 'prenom', 'email', 'bio'].map((field) => (
+          <View style={styles.inputWrapper} key={field}>
+            <TextInput
+              placeholder={`${field.charAt(0).toUpperCase() + field.slice(1)}`}
+              style={styles.input}
+              value={formData[field]}
+              onChangeText={(text) => handleInputChange(field, text)}
+              keyboardType={field === 'email' ? 'email-address' : 'default'}
+              editable={editingField === field}
+              placeholderTextColor="#aaa"
+            />
+            <TouchableOpacity onPress={() => setEditingField(field)}>
+              <AntDesign name="edit" size={20} color={Colors.vert} />
+            </TouchableOpacity>
+          </View>
+        ))}
 
-        <TextInput
-          placeholder="Prénom"
-          style={styles.input}
-          value={formData.prenom}
-          onChangeText={(text) => handleInputChange('prenom', text)}
-        />
+        <View style={styles.inputWrapper}>
+          <RNPickerSelect
+            onValueChange={(value) => handleInputChange('sexe', value)}
+            items={[
+              { label: "Masculin", value: "Masculin" },
+              { label: "Féminin", value: "Féminin" }
+            ]}
+            placeholder={{ label: "Choisir le sexe", value: "" }}
+            style={{
+              inputIOS: styles.picker,
+              inputAndroid: styles.picker,
+              placeholder: { color: '#aaa', fontSize: 18 },
+              iconContainer:{
+                top:15,
+                right:0,
+                
+              },
+            }}
+            value={formData.sexe}
+            useNativeAndroidPickerStyle={false}
+            Icon={() => <AntDesign name="down" size={20} color={Colors.vert} />}
+            
+          />
+        </View>
 
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          value={formData.email}
-          onChangeText={(text) => handleInputChange('email', text)}
-          keyboardType="email-address"
-        />
-
-        <TextInput
-          placeholder="Bio"
-          style={styles.input}
-          value={formData.bio}
-          onChangeText={(text) => handleInputChange('bio', text)}
-        />
-
-        <TextInput
-          placeholder="Sexe"
-          style={styles.input}
-          value={formData.sexe}
-          onChangeText={(text) => handleInputChange('sexe', text)}
-        />
-
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
-          <Text style={styles.dateText}>{formData.dateNaissance || "Date de naissance"}</Text>
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.inputWrapper}>
+          <TextInput
+            placeholder="Date de naissance"
+            style={styles.input}
+            value={formData.dateNaissance}
+            editable={false}
+            placeholderTextColor="#aaa"
+          />
+          <AntDesign name="calendar" size={20} color={Colors.vert} />
         </TouchableOpacity>
 
         {showDatePicker && (
@@ -147,17 +175,13 @@ export default function Modif() {
             value={new Date()}
             mode="date"
             is24Hour={true}
-            display="default"
+            display="spinner"
             onChange={handleDateChange}
           />
         )}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Enregistrer</Text>
-          )}
+          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>Enregistrer</Text>}
         </TouchableOpacity>
 
         <StatusBar style="auto" />
@@ -172,6 +196,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 50,
+  },
+  AntDesign:{
+    backgroundColor: "red",
+    position: "absolute",
+    right:0,
   },
   profileContainer: {
     alignItems: 'center',
@@ -190,16 +219,29 @@ const styles = StyleSheet.create({
     top: 70,
     left: 70,
   },
-  input: {
-    fontFamily: "AbhayaLibreExtraBold",
-    fontSize: 18,
-    width: '90%',
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.vert ,
+    borderColor: Colors.vert,
     borderRadius: 15,
+    width: '90%',
+    paddingHorizontal: 15,
     marginVertical: 5,
+    backgroundColor: '#f9f9f9',
+  },
+  input: {
+    flex: 1,
+    fontSize: 18,
+    paddingVertical: 15,
+    color: '#000',
+  },
+  picker: {
+    width:310,
+    fontSize: 18,
+    paddingVertical: 12,
+    color: '#000',
+  
   },
   button: {
     backgroundColor: Colors.vert,
@@ -211,28 +253,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontFamily: "AbhayaLibreExtraBold",
     fontSize: 20,
   },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'center'
-  },
-  datePicker: {
-    width: '90%',
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: Colors.vert,
-    borderRadius: 15,
-    marginVertical: 5,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  dateText: {
-    fontFamily: "AbhayaLibreExtraBold",
-    fontSize: 18
-  }
 });

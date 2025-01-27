@@ -4,51 +4,67 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import logo from '../../assets/logo.png';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../constants/Colors';
-import CustomError from '../../component/CustomError';
-import axios from 'axios';
 
 export default function App() {
   const router = useRouter();
-    const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState({ nom: '', prenom: '', email: '', image: null });
+
+  // Récupération des informations du profil depuis le stockage local
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const storedProfile = await AsyncStorage.getItem('userProfile');
+        if (storedProfile) {
+          setProfile(JSON.parse(storedProfile));
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération du profil :", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
     <View style={styles.container}>
-      {/* Profile Picture */}
+      {/* Profile Section */}
       <View style={styles.profileContainer}>
         <View style={styles.profileIconContainer}>
-          <Ionicons name="person-circle" size={100} color="#f0c541"  />
+          {profile.image ? (
+            <Image source={{ uri: profile.image }} style={styles.profileImage} />
+          ) : (
+            <Ionicons name="person-circle" size={100} color="#f0c541" />
+          )}
         </View>
-        <Text style={styles.profileName}>DONWAHOUE Jesse</Text>
-        <Text style={styles.profileEmail}>jessedowahoue8@gmail.com</Text>
+        <Text style={styles.profileName}>{profile.nom} {profile.prenom}</Text>
+        <Text style={styles.profileEmail}>{profile.email}</Text>
       </View>
 
       {/* Tasks Completed */}
-      <TouchableOpacity  onPress={() => router.push('/parametres/accomplis')} style={styles.optionContainer}>
-        <Text style={styles.optionText}>Tache accomplis</Text>
-        <Ionicons name="chevron-forward" size={20} color= {Colors.vert} />
+      <TouchableOpacity onPress={() => router.push('/parametres/accomplis')} style={styles.optionContainer}>
+        <Text style={styles.optionText}>Tâches accomplies</Text>
+        <Ionicons name="chevron-forward" size={20} color={Colors.vert} />
       </TouchableOpacity>
 
       {/* Settings */}
-      <TouchableOpacity  onPress={() => router.push('/parametres/parametre')} style={styles.optionContainer}>
-        <Text style={styles.optionText}>Paramètre</Text>
-        <Ionicons name="chevron-forward" size={20} color= {Colors.vert} />
+      <TouchableOpacity onPress={() => router.push('/parametres/parametre')} style={styles.optionContainer}>
+        <Text style={styles.optionText}>Paramètres</Text>
+        <Ionicons name="chevron-forward" size={20} color={Colors.vert} />
       </TouchableOpacity>
 
       {/* Logout Button */}
-      <TouchableOpacity   onPress={() => router.push('/auth/signin')} style={styles.logoutButton}>
+      <TouchableOpacity onPress={() => router.push('/auth/signin')} style={styles.logoutButton}>
         <Ionicons name="log-out-outline" size={20} color="white" />
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutText}>Déconnexion</Text>
       </TouchableOpacity>
 
       <StatusBar style="auto" />
@@ -59,22 +75,24 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     alignItems: 'center',
-    marginTop:50,
-    
+    marginTop: 50,
   },
   profileContainer: {
     alignItems: 'center',
     marginBottom: 40,
   },
   profileIconContainer: {
-    borderWidth:2,
+    borderWidth: 2,
     borderColor: Colors.orange,
     borderRadius: 50,
     overflow: 'hidden',
     marginBottom: 10,
-   
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
   profileName: {
     fontSize: 23,
@@ -84,7 +102,7 @@ const styles = StyleSheet.create({
   profileEmail: {
     fontFamily: "AbhayaLibreExtraBold",
     fontSize: 16,
-   color: 'gray',
+    color: 'gray',
   },
   optionContainer: {
     flexDirection: 'row',
@@ -120,3 +138,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
+
