@@ -2,18 +2,28 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Colors } from '../constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function RenderItemTask({item, validateTask}) {
+export default function RenderItemTask({ item, validateTask }) {
     return (
         <View style={styles.taskCard}>
+            <View>
             <Text style={styles.taskTitle}>{item.title}</Text>
             <Text style={styles.taskDate}>{item.date}</Text>
+            </View>
             <TouchableOpacity
-                style={[styles.validateButton, item.valid ? styles.valid : styles.invalid]}
                 onPress={() => validateTask(item.id)}
                 disabled={item.valid}
             >
-                <Text style={styles.buttonText}>{item.valid ? 'Validée' : 'Valider'}</Text>
+                <LinearGradient
+                    colors={item.valid ? [Colors.gris_foncer, Colors.gris_foncer] : [Colors.gradient, Colors.gradient_foncer]}
+                    style={styles.validateButton}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
+                    <Text style={styles.buttonText}>{item.valid ? 'Validée' : 'Valider'}</Text>
+
+                </LinearGradient>
             </TouchableOpacity>
         </View>
     )
@@ -43,7 +53,7 @@ const styles = StyleSheet.create({
     taskDate: {
         fontFamily: "AbhayaLibreRegular",
         fontSize: 14,
-        color: Colors.noir_fondu,
+        color: Colors.noir_fondu + "60",
         marginVertical: 4,
     },
     validateButton: {
