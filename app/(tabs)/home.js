@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-// import { BarChart } from 'react-native-chart-kit';
-import person from '../../assets/pers.png';
+import Entypo from '@expo/vector-icons/Entypo';
 import ProfilCard from '../../component/ProfilCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import { Badge } from 'react-native-paper';
 import BarChart from '../../component/BarChart';
+import PuceList from '../../component/PuceList';
+
+const colorsList = ['#30D080', '#53B986', '#98E8C0', '#1C4D34'];
 
 export default function App() {
   const router = useRouter();
@@ -20,6 +22,11 @@ export default function App() {
     { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
     { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
     { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
+    { id: 6, name: 'CALAVI', thisWeek: [50, 20, 10, 30, 40, 7, 7], lastWeek: [30, 40, 20, 25, 35, 30, 40, 20, 25, 35, 30, 40, 20, 25] },
+    { id: 7, name: 'COTONOU', thisWeek: [30, 40, 20, 60, 80, 7, 7], lastWeek: [20, 25, 15, 50, 60, 20, 25, 15, 50, 60, 20, 25, 15, 50] },
+    { id: 8, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
+    { id: 9, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
+    { id: 10, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
   ]);
 
   const [selectedCity, setSelectedCity] = useState(cities[0]); // Ville sélectionnée
@@ -56,13 +63,17 @@ export default function App() {
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.cityList}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <TouchableOpacity
+            
               style={[
                 styles.cityButton,
+                { backgroundColor: colorsList[index % colorsList.length] },
                 item.id === selectedCity.id && styles.cityButtonSelected,
+                index !== 0 && {marginTop: -(index+2), zIndex: item.id === selectedCity.id ? index : -index},
               ]}
               onPress={() => setSelectedCity(item)}
+              activeOpacity={0.7}
             >
               <Text
                 style={[
@@ -78,10 +89,10 @@ export default function App() {
 
         {/* Graphique */}
         <View style={styles.chartContainer}>
-          <Text style={styles.chartLegend}>
-            <Text style={[styles.legendText, { color: Colors.redGraph}]}>● Collecte réalisée cette semaine</Text>{'\n'}
-            <Text style={[styles.legendText, { color: Colors.blackGraph}]}>● Collecte réalisée les semaines précédentes</Text>
-          </Text>
+          <View style={styles.chartLegend}>
+            <PuceList dotColor={Colors.redGraph} textColor={Colors.noir} text={"Collecte réalisée cette semaine"}/>
+          <PuceList dotColor={Colors.blackGraph} textColor={Colors.noir} text={"Collecte réalisée les semaines précédentes"}/>
+          </View>
           <BarChart
           previousData={selectedCity.lastWeek}
           currentData={selectedCity.thisWeek}
@@ -89,27 +100,6 @@ export default function App() {
           barSpacing={11}
           cornerRadius={3.06}
           />
-          {/* <BarChart
-            data={{
-              labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
-              datasets: [
-                { data: selectedCity.thisWeek, color: () => 'rgba(255, 99, 132, 1)' }, // Rouge
-                { data: selectedCity.lastWeek, color: () => 'rgba(0, 0, 0, 1)' }, // Noir
-              ],
-            }}
-            width={350}
-            height={200}
-            fromZero
-            chartConfig={{
-              backgroundGradientFrom: '#fff',
-              backgroundGradientTo: '#fff',
-              color: (opacity = 1) => rgba(0, 0, 0, ${opacity}),
-              labelColor: () => 'gray',
-              barPercentage: 0.5,
-            }}
-            style={styles.chart}
-            showBarTops={false}
-          /> */}
         </View>
       </View>
     </SafeAreaView>
@@ -132,7 +122,7 @@ const styles = StyleSheet.create({
   searchContainerWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 18,
+    marginVertical: 16,
   },
 
   searchContainer: {
@@ -155,49 +145,42 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   notificationIcon: {
-    backgroundColor: Colors.gris_notif,
+    backgroundColor: Colors.vert_rech,
     padding: 8.1,
     borderRadius: 15,
     marginHorizontal: 4,
     position: "relative"
   },
   cityList: {
-    marginBottom: 20,
   },
   cityButton: {
-    backgroundColor: 'green',
-    paddingVertical: 15,
+    backgroundColor: Colors.gradient_foncer,
+    paddingVertical: 20,
     paddingHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 22,
     marginHorizontal: 5,
   },
   cityButtonSelected: {
-    backgroundColor: '#004d40',
+    backgroundColor: Colors.vert_select,
   },
   cityButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: Colors.white,
+    fontSize: 18,
     fontFamily: "AbhayaLibreRegular",
   },
   cityButtonTextSelected: {
-    color: '#f4f4f4',
+    color: Colors.gris,
   },
   chartContainer: {
-    marginTop: 20,
+    marginTop: 18,
     backgroundColor: Colors.graphBackground,
     borderRadius: 16,
-    paddingTop: 8
+    paddingTop: 6
   },
   chartLegend: {
     textAlign: 'center',
-    marginVertical: 5,
   },
   chart: {
     borderRadius: 15,
   },
-  legendText: {
-    fontFamily: "AbhayaLibreRegular",
-    fontSize: 14,
-    lineHeight: 14
-  }
 });

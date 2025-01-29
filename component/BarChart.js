@@ -4,8 +4,6 @@ import Svg, { Rect } from 'react-native-svg';
 import { Colors } from '../constants/Colors';
 
 const BarChart = (props) => {
-  const previousData = [20, 30, 40, 35, 50, 45, 10, 5, 15, 10, 20, 15, 12, 18];
-  const currentData = [10, 15, 20, 25, 30, 35, 40];
 
   const barWidth = 3.06;
   const barSpacing = 11;
@@ -26,7 +24,7 @@ const BarChart = (props) => {
   const currentBars = props?.currentData.map((value, index) => (
     <Rect
       key={`curr-${index}`}
-      x={(props?.barWidth + props?.barSpacing) * (index + props?.previousData.length)}
+      x={(barWidth + barSpacing) * (index + props?.previousData.length)}
       y={100 - value}
       width={props?.barWidth}
       height={value}
@@ -49,8 +47,8 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    paddingTop: 15
+    padding: 10,
+    paddingBottom: 15
   }
 });
 
