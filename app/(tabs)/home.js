@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -9,6 +9,7 @@ import { Colors } from '../../constants/Colors';
 import { Badge } from 'react-native-paper';
 import BarChart from '../../component/BarChart';
 import PuceList from '../../component/PuceList';
+import axios from 'axios';
 
 const colorsList = ['#30D080', '#53B986', '#98E8C0', '#1C4D34'];
 
@@ -29,7 +30,30 @@ export default function App() {
     { id: 10, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
   ]);
 
+  const [search, setSearch] = useState("")
+  console.log('search :>> ', search);
+  const filteredCities = [...(search ? 
+    cities.filter(city => city.name.toLocaleLowerCase().includes(search?.toLowerCase()))
+    : cities)].sort((a, b) => (a.name < b.name) ? -1 : 1)
+  console.log('filteredCities :>> ', filteredCities);
+
   const [selectedCity, setSelectedCity] = useState(cities[0]); // Ville sélectionnée
+  const [profile, setProfile] = useState([])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get('userProfile');
+      if (storedProfile) {
+        setProfile(JSON.parse(storedProfile));
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération du profil :", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -42,7 +66,7 @@ export default function App() {
         <View style={styles.searchContainerWrapper}>
           <View style={styles.searchContainer}>
             <Ionicons name="search-outline" size={20} color={Colors.vert_select} style={styles.searchIcon} />
-            <TextInput placeholder="Rechercher une tâche" style={styles.searchInput} />
+            <TextInput value={search} onChangeText={(e) => setSearch(e)} placeholder="Rechercher une tâche" style={styles.searchInput} />
           </View>
 
           <View style={{position: "relative"}}>
@@ -59,7 +83,7 @@ export default function App() {
 
         {/* Liste des villes */}
         <FlatList
-          data={cities}
+          data={filteredCities}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.cityList}
