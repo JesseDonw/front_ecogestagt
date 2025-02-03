@@ -14,9 +14,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.ecogestagt.app",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.ecogestagt.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo2.png",
         "backgroundColor": "#ffffff"
@@ -31,6 +33,12 @@
         "expo-image-picker",
         {
           "photosPermission": "L'application souhaite accéder à vos photos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Autoriser $(PRODUCT_NAME) à utiliser votre position."
         }
       ],
       "expo-router"
