@@ -23,12 +23,7 @@ export default function App() {
     { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
     { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
     { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
-    { id: 6, name: 'CALAVI', thisWeek: [50, 20, 10, 30, 40, 7, 7], lastWeek: [30, 40, 20, 25, 35, 30, 40, 20, 25, 35, 30, 40, 20, 25] },
-    { id: 7, name: 'COTONOU', thisWeek: [30, 40, 20, 60, 80, 7, 7], lastWeek: [20, 25, 15, 50, 60, 20, 25, 15, 50, 60, 20, 25, 15, 50] },
-    { id: 8, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
-    { id: 9, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
-    { id: 10, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
-  ]);
+   ]);
 
   const [search, setSearch] = useState("")
   console.log('search :>> ', search);
@@ -42,10 +37,10 @@ export default function App() {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get('userProfile');
-      if (storedProfile) {
-        setProfile(JSON.parse(storedProfile));
-      }
+      //const response = await axios.get('userProfile');
+      //if (storedProfile) {
+      //  setProfile(JSON.parse(storedProfile));
+      //}
     } catch (error) {
       console.error("Erreur lors de la récupération du profil :", error);
     }

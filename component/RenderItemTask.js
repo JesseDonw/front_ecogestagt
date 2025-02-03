@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { useRouter } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function RenderItemTask({ item, validateTask }) {
+    const router = useRouter()
+    const handlePress = () =>{
+        router.push({ pathname: "/location/maps", params: { latitude: 6.364560, longitude: 2.423672 } });
+    }
+    //() => validateTask(item.id)
     return (
         <View style={styles.taskCard}>
             <View>
@@ -12,7 +17,7 @@ export default function RenderItemTask({ item, validateTask }) {
             <Text style={styles.taskDate}>{item.date}</Text>
             </View>
             <TouchableOpacity
-                onPress={() => validateTask(item.id)}
+                onPress={handlePress}
                 disabled={item.valid}
             >
                 <LinearGradient
