@@ -1,40 +1,65 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://c63c-197-234-219-41.ngrok-free.app/api'; // Remplace par ton URL Laravel
+const API_URL = 'https://2809-41-79-219-8.ngrok-free.app/api';
+const ADMIN_ID = 1;
+const ADMIN_TYPE = 'App\\Models\\Administrateur';
+const AGENT_TYPE = 'App\\Models\\AgentCollecte';
 
-// Fonction pour démarrer une conversation (Client -> Admin)
-export const startConversation = async (clientId) => {
+// Fonction pour envoyer un message de l'agent à l'administrateur
+export const sendMessageToAdmin = async (content) => {
   try {
-    const response = await axios.post(`${API_URL}/start-conversation`, { client_id: clientId });
+    const token = await AsyncStorage.getItem('userToken');
+    const agentId = await AsyncStorage.getItem('agentId');
+
+    if (!token) throw new Error('Token non trouvé dans AsyncStorage');
+    if (!agentId) throw new Error('ID de l\'agent non trouvé dans AsyncStorage');
+
+    const response = await axios.post(`${API_URL}/send-message`, {
+      sender_id: parseInt(agentId),
+      sender_type: AGENT_TYPE,
+      receiver_id: ADMIN_ID,
+      receiver_type: ADMIN_TYPE,
+      content: content,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+    });
+
+    console.log("Message envoyé avec succès:", response.data);
     return response.data;
   } catch (error) {
-    console.error('Erreur de démarrage de la conversation:', error);
+    console.error("Erreur lors de l'envoi du message:", error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
-// Fonction pour envoyer un message (Agent ou Client)
-export const sendMessageToAPI = async (conversationId, senderId, senderType, text) => {
+// Fonction pour récupérer les messages entre l'agent et l'administrateur
+export const fetchMessagesWithAdmin = async () => {
   try {
-    const response = await axios.post(`${API_URL}/send-message`, {
-      conversation_id: conversationId,
-      sender_id: senderId,
-      sender_type: senderType,
-      message: text,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de l'envoi du message:", error);
-  }
-};
+    const token = await AsyncStorage.getItem('userToken');
+    const agentId = await AsyncStorage.getItem('agentId');
 
-// Fonction pour récupérer les messages d'une conversation
-export const fetchMessages = async (conversationId) => {
-  try {
-    const response = await axios.get(`${API_URL}/messages/${conversationId}`);
+    if (!token) throw new Error('Token non trouvé dans AsyncStorage');
+    if (!agentId) throw new Error('ID de l\'agent non trouvé dans AsyncStorage');
+
+    const response = await axios.get(`${API_URL}/fetch-messages`, {
+      params: {
+        with_id: ADMIN_ID,
+        with_type: ADMIN_TYPE,
+      },
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Messages récupérés avec l'administrateur:", response.data);
     return response.data;
   } catch (error) {
-    console.error('Erreur lors de la récupération des messages:', error);
+    console.error('Erreur lors de la récupération des messages:', error.response ? error.response.data : error.message);
     return [];
   }
 };

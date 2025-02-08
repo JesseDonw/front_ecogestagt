@@ -78,31 +78,42 @@ export default function Signin() {
                     mail_agent: email?.trim(),
                     mdp_agent: password?.trim(),
                 };
-
+    
                 console.log('data :>> ', data);
-                router.replace("/home");
-
-                //Envoi de la requête à l'API
-                const response = await axios.post('https://c63c-197-234-219-41.ngrok-free.app/api/login', data);
-
-                console.log('connecté :>> ', response.data);
-
-                // Si la connexion est réussie, on sauvegarde le token
-                if (response.data.token) {
+    
+                // Envoi de la requête à l'API
+                const response = await axios.post('https://2809-41-79-219-8.ngrok-free.app/api/login', data);
+                console.log('API Response:', response.data);
+    
+                if (response.data.agent_id && response.data.token) {
+                    // Stocker le agentId en tant que chaîne de caractères
+                    await AsyncStorage.setItem('agentId', response.data.agent_id.toString());
+                
+                    // Stocker le token
                     await AsyncStorage.setItem('userToken', response.data.token);
-                    await AsyncStorage.setItem('agentId', response.data.agent_id);  // Stockage du token
+                
+                    // Naviguer après une connexion réussie
                     router.replace("/home");
                 } else {
-                    Alert.alert('Erreur', 'Token non trouvé');
+                    if (!response.data.agent_id) {
+                        console.log('agent_id not found in response');
+                    }
+                    if (!response.data.token) {
+                        Alert.alert('Erreur', 'Token non trouvé');
+                    }
                 }
+                
+                
             }
         } catch (error) {
             console.log('error :>> ', error);
-            Alert.alert('Erreur', 'Identifiants incorrects ou problème avec le serveur');
         } finally {
             setLoading(false);
         }
     };
+  
+    
+    
 
     return (
         <View style={styles.container}>
@@ -166,9 +177,6 @@ export default function Signin() {
                     <Text style={styles.socialButtonText}>Google</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => router.push('/auth/signup')}>
-                <Text style={styles.linkText}>Créer un compte</Text>
-            </TouchableOpacity>
             <TouchableOpacity>
                 <Text style={styles.linkText}>Mot de passe oublié</Text>
             </TouchableOpacity>

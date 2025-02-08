@@ -5,122 +5,110 @@ import UserCard from '../../component/UserCard';
 import RenderItemchat from "../../component/RenderItemchat";
 import Feather from '@expo/vector-icons/Feather';
 import { Colors } from "../../constants/Colors";
-import { fetchMessages, sendMessageToAPI } from '../../component/chatService';
+import { fetchMessagesWithAdmin, sendMessageToAdmin } from '../../component/chatService';
 
-const conversationId = 1; // ID de conversation (à récupérer dynamiquement)
-
-export default function Discussion() {
+export default function AgentDiscussion() {
+  
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [agentId, setAgentId] = useState(null);
 
-  // Fonction pour récupérer l'ID de l'agent depuis AsyncStorage
-  const getAgentIdFromStorage = async () => {
-    try {
-      const storedAgentId = await AsyncStorage.getItem('agentId');
-      if (storedAgentId) {
-        setAgentId(parseInt(storedAgentId, 10));
-      } else {
-        console.warn("Agent ID non trouvé dans le stockage.");
+  // Récupération de l'ID de l'agent depuis AsyncStorage
+  useEffect(() => {
+    const initializeAgentId = async () => {
+      try {
+        const storedAgentId = await AsyncStorage.getItem('agentId');
+        if (!storedAgentId) {
+          console.log('Aucun ID agent trouvé, redirection vers la connexion');
+          router.replace('/auth/signin');  // Redirection si non connecté
+        } else {
+          console.log('ID agent récupéré:', storedAgentId);
+          setAgentId(parseInt(storedAgentId, 10));  // Convertir en nombre
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération de l\'ID agent:', error);
       }
-    } catch (error) {
-      console.error("Erreur lors de la récupération de l'agent ID :", error);
+    };
+
+    initializeAgentId();
+  }, []);
+
+  // Charger les messages après avoir récupéré l'ID de l'agent
+  useEffect(() => {
+    if (agentId) {
+      loadMessages();  // Charger les messages
+      const intervalId = setInterval(loadMessages, 5000);  // Actualiser toutes les 5 secondes
+      return () => clearInterval(intervalId);  // Nettoyer l'intervalle à la fermeture
     }
-  };
-  
-  // Fonction pour charger les messages
+  }, [agentId]);
+
+  // Fonction pour récupérer les messages
   const loadMessages = async () => {
     try {
-      const chatMessages = await fetchMessages(conversationId);
+      const chatMessages = await fetchMessagesWithAdmin();
       const formattedMessages = chatMessages.map(msg => ({
         id: msg.id.toString(),
-        text: msg.message,
-        sender: msg.sender_type === 'agent' ? 'Agent' : 'Client',
+        text: msg.content,
+        sender: msg.sender_type === 'App\\Models\\AgentCollecte' ? 'agent' : 'admin',
       }));
-
-      // Trier les messages du plus ancien au plus récent
       setMessages(formattedMessages.sort((a, b) => a.id - b.id));
     } catch (error) {
-      console.error("Erreur lors du chargement des messages :", error);
+      console.error("Erreur lors du chargement des messages:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getAgentIdFromStorage();
-    loadMessages();
-
-    // Met en place un intervalle pour vérifier les nouveaux messages toutes les 5 secondes
-    const intervalId = setInterval(() => {
-      loadMessages();
-    }, 5000);
-
-    // Nettoyer l'intervalle lorsque le composant est démonté
-    return () => clearInterval(intervalId);
-  }, []);
-
+  // Fonction pour envoyer un message
   const sendMessage = async () => {
     if (message.trim() && agentId) {
-      const newMessage = {
-        id: Math.random().toString(),
-        text: message,
-        sender: 'Agent',
-      };
-
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      const newMessage = { id: Math.random().toString(), text: message, sender: 'agent' };
+      setMessages(prevMessages => [...prevMessages, newMessage]);
 
       try {
-        await sendMessageToAPI(conversationId, agentId, 'agent', message);
-        setMessage('');
-        loadMessages(); // Recharge immédiatement après envoi
+        await sendMessageToAdmin(message);  // Envoi du message à l'API
+        setMessage('');  // Réinitialiser le champ de texte
+        loadMessages();  // Recharger les messages après l'envoi
       } catch (error) {
-        console.error("Erreur lors de l'envoi du message :", error);
+        console.error("Erreur lors de l'envoi du message:", error);
       }
-    } else {
-      console.warn("Message vide ou agent ID non défini.");
     }
   };
- 
+
+  const RenderItemChat = ({ item }) => (
+    <View style={[styles.messageContainer, item.sender === 'agent' ? styles.agentMessage : styles.adminMessage]}>
+      <Text style={styles.messageText}>{item.text}</Text>
+    </View>
+  );
+
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} 
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}>
       <View style={styles.innerContainer}>
-        <UserCard imageUrl={undefined} name="Bruno" isOnline={true} />
-        
+        <UserCard imageUrl={undefined} name="Administrateur" isOnline={true} />
         <View style={styles.chatWrapper}>
           {loading ? (
             <Text style={styles.loadingText}>Chargement des messages...</Text>
           ) : (
-            <FlatList
-              data={messages}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => item && <RenderItemchat item={item} />}
-              keyExtractor={(item) => item?.id || Math.random().toString()}
+            <FlatList 
+              data={messages} 
+              showsVerticalScrollIndicator={false} 
+              renderItem={({ item }) => <RenderItemChat item={item} />} 
+              keyExtractor={item => item.id} 
             />
           )}
-
           <View style={[styles.inputContainer, styles.shadow]}>
-            <TextInput
-              autoFocus={true}
-              multiline
-              numberOfLines={4}
-              selectionColor={Colors.vert}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="Écrire un message..."
-              style={styles.input}
+            <TextInput 
+              multiline 
+              numberOfLines={4} 
+              selectionColor={'#00A86B'} 
+              value={message} 
+              onChangeText={setMessage} 
+              placeholder="Écrire un message..." 
+              style={styles.input} 
             />
-            <Pressable 
-              android_ripple={{ color: Colors.vert + "50", foreground: true }} 
-              onPress={sendMessage} 
-              style={styles.sender}
-            >
-              <Feather name="send" size={24} color={Colors.vert} />
+            <Pressable onPress={sendMessage} style={styles.sender}>
+              <Feather name="send" size={24} color={'#00A86B'} />
             </Pressable>
           </View>
         </View>
@@ -179,6 +167,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
     fontSize: 16,
-    color: Colors.vert,
+    color: '#00A86B',
+  },
+  messageContainer: {
+    padding: 10,
+    marginVertical: 4,
+    borderRadius: 8,
+    maxWidth: '80%',
+  },
+  agentMessage: {
+    backgroundColor: '#DCF8C6',
+    alignSelf: 'flex-end',
+  },
+  adminMessage: {
+    backgroundColor: '#FFFFFF',
+    alignSelf: 'flex-start',
+  },
+  messageText: {
+    fontSize: 16,
   },
 });
+
