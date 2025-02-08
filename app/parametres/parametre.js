@@ -24,11 +24,7 @@ export default function Param() {
   return (
     <View style={styles.container}>
       {/* Options */}
-      <TouchableOpacity onPress={() => router.push('/parametres/modif_profil')} style={styles.optionContainer}>
-        <Text style={styles.optionText}>Modification du profil</Text>
-        <Ionicons name="chevron-forward" size={20} color= {Colors.vert} />
-      </TouchableOpacity>
-
+    
       <TouchableOpacity onPress={() => router.push('/parametres/modif_mdp')} style={styles.optionContainer}>
         <Text style={styles.optionText}>Changer le mot de passe</Text>
         <Ionicons name="chevron-forward" size={20} color= {Colors.vert} />

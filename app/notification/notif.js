@@ -12,17 +12,17 @@ export default function NotificationsScreen() {
   const notifications = [
     {
       id: 1,
-      title: 'Your order has been taken by the driver',
+      title: 'Nouvelle Tâche',
       time: 'Recently'
     },
     {
       id: 2,
-      title: 'Topup for $100 was successful',
+      title: 'Nouvelle Tâche',
       time: '10:00 AM'
     },
     {
       id: 3,
-      title: 'Your order has been canceled',
+      title: 'Nouvelle Tâche',
       time: '22 June 2023'
     }
   ];
