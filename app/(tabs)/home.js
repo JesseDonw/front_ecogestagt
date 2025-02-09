@@ -55,7 +55,10 @@ export default function App() {
       <View style={styles.container}>
         <ProfilCard
           welText="Bienvenue!"
-          userName='jesse DONWAHOUE'
+          name='DONWAHOUE'
+          prenom='jesse'
+          email='jjjjj.gmail.com'
+          image=""
         />
         {/* Barre de recherche */}
         <View style={styles.searchContainerWrapper}>

@@ -22,7 +22,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo2.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -42,6 +47,14 @@
         }
       ],
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6b2b8b09-b806-4238-b1e9-5da0f5322a49"
+      }
+    }
   }
 }

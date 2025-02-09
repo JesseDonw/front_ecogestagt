@@ -1,74 +1,57 @@
-import { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
-import { useLocalSearchParams, useFocusEffect } from "expo-router";
-import { Colors } from '../../constants/Colors'
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useLocalSearchParams } from "expo-router";
 
-const ORS_API_KEY = "5b3ce3597851110001cf6248ab9ab058321743eda1b69ca7b2258079"; // Remplace avec ta clé OpenRouteService
+// Clés API pour Android et iOS directement dans le code
+const GOOGLE_MAPS_API_KEY_ANDROID = "AIzaSyABgK4WMfdlzYCyIGSrUcx1sLVkYivqFGE";
+const GOOGLE_MAPS_API_KEY_IOS = "AIzaSyCflWYQ62JqOunKpFNRbOMvhUsLmC7KaeI";
+
+const GOOGLE_MAPS_APIKEY = Platform.OS === 'android' ? GOOGLE_MAPS_API_KEY_ANDROID : GOOGLE_MAPS_API_KEY_IOS;
 
 export default function MapScreen() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [mapRegion, setMapRegion] = useState(null);
-  const { latitude, longitude } = useLocalSearchParams(); // Destination (maison)
+  const { latitude, longitude } = useLocalSearchParams(); // Coordonnées de la maison
 
-  useFocusEffect(
-    useCallback(() => {
-      let locationSubscription;
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission refusée");
+        return;
+      }
 
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission refusée");
-          return;
+      // Suivi de la position en temps réel
+      const locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000, // Mise à jour toutes les 5 secondes
+          distanceInterval: 10, // Mise à jour toutes les 10 mètres
+        },
+        (location) => {
+          setCurrentLocation(location.coords);
+          fetchRoute(location.coords.latitude, location.coords.longitude);
         }
-
-        // Réinitialiser l'état à chaque fois qu'on revient sur l'écran
-        setCurrentLocation(null);
-        setRouteCoordinates([]);
-
-        locationSubscription = await Location.watchPositionAsync(
-          {
-            accuracy: Location.Accuracy.High,
-            timeInterval: 5000,
-            distanceInterval: 10,
-          },
-          (location) => {
-            const { latitude: userLat, longitude: userLng } = location.coords;
-            setCurrentLocation({ latitude: userLat, longitude: userLng });
-            setMapRegion({
-              latitude: userLat,
-              longitude: userLng,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            });
-            fetchRoute(userLat, userLng);
-          }
-        );
-      })();
+      );
 
       return () => {
-        if (locationSubscription) {
-          locationSubscription.remove();
-        }
+        locationSubscription.remove(); // Arrêter le suivi lors du démontage
       };
-    }, [latitude, longitude])
-  );
+    })();
+  }, []);
 
-  // Récupérer l'itinéraire avec OpenRouteService
   const fetchRoute = async (startLat, startLng) => {
-    const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${ORS_API_KEY}&start=${startLng},${startLat}&end=${longitude},${latitude}`;
-
+    const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${latitude},${longitude}&mode=driving&key=${GOOGLE_MAPS_APIKEY}`;
+    
     try {
-      const response = await fetch(url);
+      const response = await fetch(endpoint);
       const data = await response.json();
-      if (data.features) {
-        const points = data.features[0].geometry.coordinates.map(coord => ({
-          latitude: coord[1],
-          longitude: coord[0],
-        }));
+
+      if (data.routes.length) {
+        // Convertir l'itinéraire en points GPS
+        const points = decodePolyline(data.routes[0].overview_polyline.points);
         setRouteCoordinates(points);
       }
     } catch (error) {
@@ -76,15 +59,50 @@ export default function MapScreen() {
     }
   };
 
+  // Fonction pour décoder la polyline de Google
+  const decodePolyline = (encoded) => {
+    let points = [];
+    let index = 0, len = encoded.length;
+    let lat = 0, lng = 0;
+
+    while (index < len) {
+      let b, shift = 0, result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      let dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      let dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      points.push({ latitude: lat / 1e5, longitude: lng / 1e5 });
+    }
+    return points;
+  };
+
   return (
     <View style={styles.container}>
       <MapView
-        provider={PROVIDER_DEFAULT} // Utilisation d'OpenStreetMap
         style={styles.map}
-        region={mapRegion}
-        onRegionChangeComplete={setMapRegion}
+        initialRegion={{
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+        showsUserLocation
+        followsUserLocation
       >
-        {/* Marqueur position actuelle */}
         {currentLocation && (
           <Marker
             coordinate={{
@@ -96,7 +114,6 @@ export default function MapScreen() {
           />
         )}
 
-        {/* Marqueur destination */}
         <Marker
           coordinate={{
             latitude: parseFloat(latitude),
@@ -106,7 +123,6 @@ export default function MapScreen() {
           title="Maison de destination"
         />
 
-        {/* Itinéraire en bleu */}
         {routeCoordinates.length > 0 && (
           <Polyline
             coordinates={routeCoordinates}
@@ -118,15 +134,11 @@ export default function MapScreen() {
 
       {/* Menu Modal en bas */}
       <View style={styles.bottomMenu}>
-        <Text style={styles.label}>📍 Adresse de départ</Text>
-        <Text style={styles.locationText}>
-          {currentLocation ? `Latitude: ${currentLocation.latitude}, Longitude: ${currentLocation.longitude}` : "En attente..."}
-        </Text>
+        <Text style={styles.label}>📍 Ma position</Text>
+        <Text style={styles.locationText}>Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}</Text>
 
-        <Text style={styles.label}>🏠 Adresse de destination</Text>
-        <Text style={styles.locationText}>
-          Latitude: {latitude}, Longitude: {longitude}
-        </Text>
+        <Text style={styles.label}>🏠 Maison de destination</Text>
+        <Text style={styles.locationText}>Latitude: {latitude}, Longitude: {longitude}</Text>
 
         <TouchableOpacity style={styles.validateButton}>
           <Text style={styles.buttonText}>Valider</Text>
@@ -137,8 +149,12 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  map: { flex: 1 },
+  container: {
+    flex: 1,
+  },
+  map: {
+    flex: 1,
+  },
   bottomMenu: {
     position: "absolute",
     bottom: 0,
@@ -151,8 +167,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },
-  label: { fontSize: 16, fontWeight: "bold" },
-  locationText: { fontSize: 14, color: "gray", marginBottom: 10 },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  locationText: {
+    fontSize: 14,
+    color: "gray",
+    marginBottom: 10,
+  },
   validateButton: {
     backgroundColor: "green",
     padding: 15,
@@ -160,5 +183,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  buttonText: { color: "white", fontSize: 16, fontWeight: "bold" },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
