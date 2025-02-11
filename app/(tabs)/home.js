@@ -55,7 +55,10 @@ export default function App() {
       <View style={styles.container}>
         <ProfilCard
           welText="Bienvenue!"
-          userName='jesse DONWAHOUE'
+          name='Agent'
+          prenom='Ag'
+          email='agent@gmail.com'
+          image="https://ui-avatars.com/api/?name=Ad&background=0D8AC&color=fff&size=80"
         />
         {/* Barre de recherche */}
         <View style={styles.searchContainerWrapper}>
