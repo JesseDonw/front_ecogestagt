@@ -11,12 +11,13 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
+    "@gorhom/bottom-sheet": "^5.1.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-picker/picker": "2.9.0",
     "axios": "^1.7.9",
     "babel-plugin-inline-svg": "^1.2.0",
-    "expo": "~52.0.32",
+    "expo": "~52.0.33",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",
     "expo-image-picker": "~16.0.6",
@@ -44,5 +45,16 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-maps",
+          "react-native-chart-kit",
+          "react-native-keyboard-aware-scroll-view"
+        ]
+      }
+    }
+  }
 }

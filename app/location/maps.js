@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef, useMemo, useCallback, } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { useLocalSearchParams } from 'expo-router';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { Colors } from '../../constants/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const GOOGLE_MAPS_API_KEY_ANDROID = "AIzaSyBTTAnxDhoifYOBsxW_C7ZyfmpU8LJMbT4";
 const GOOGLE_MAPS_API_KEY_IOS = "AIzaSyBTTAnxDhoifYOBsxW_C7ZyfmpU8LJMbT4";
@@ -13,11 +18,15 @@ export default function MapScreen() {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [region, setRegion] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { latitude, longitude } = useLocalSearchParams()
+
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ["15%", "25%"], []);
 
   // Coordonnées de la maison (exemple au Bénin : Cotonou)
   const destination = {
-    latitude: 6.3703,  // Latitude de Cotonou
-    longitude: 2.3912  // Longitude de Cotonou
+    latitude: parseFloat(latitude),  // Latitude de Cotonou
+    longitude: parseFloat(longitude)  // Longitude de Cotonou
   };
 
   useEffect(() => {
@@ -33,13 +42,13 @@ export default function MapScreen() {
       });
 
       setCurrentLocation(coords);
-      fetchRoute(coords.latitude, coords.longitude);
+      // fetchRoute(coords.latitude, coords.longitude);
     })();
   }, []);
 
   const fetchRoute = async (startLat, startLng) => {
     const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&alternatives=true&key=${GOOGLE_MAPS_APIKEY}`;
-    
+
     try {
       const response = await fetch(endpoint);
       const data = await response.json();
@@ -100,9 +109,15 @@ export default function MapScreen() {
     return points;
   };
 
+  // callbacks
+  const handleSheetChange = useCallback((index) => {
+    console.log("handleSheetChange", index);
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {loading ? (
+    <SafeAreaView style={styles.safeAreaView}>
+      <View style={styles.container}>
+        {/* {loading ? (
         <ActivityIndicator size="large" color="green" style={styles.loader} />
       ) : (
         <MapView
@@ -110,6 +125,7 @@ export default function MapScreen() {
           region={region}
           showsUserLocation
           followsUserLocation
+          compassOffset={{ x: 0, y: 80 }}
         >
           {currentLocation && (
             <Marker
@@ -136,24 +152,92 @@ export default function MapScreen() {
             />
           )}
         </MapView>
-      )}
+      )} */}
 
-      <View style={styles.bottomMenu}>
-        <Text style={styles.label}>📍 Ma position</Text>
-        <Text style={styles.locationText}>Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}</Text>
+        {/* Bottom Sheet */}
 
-        <Text style={styles.label}>🏠 Maison de destination</Text>
-        <Text style={styles.locationText}>Latitude: {destination.latitude}, Longitude: {destination.longitude}</Text>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          enableDynamicSizing={false}
+          onChange={handleSheetChange}
+          backgroundStyle={styles.bottomWrapper}
+        >
+          <BottomSheetView style={styles.contentContainer}>
+            <View style={styles.bottomContent}>
+              <View style={styles.labelWrapper}>
+                <Text
+                  style={styles.marker}
+                  backgroundColor={Colors.gradient33}
+                >
+                  <FontAwesome5
+                    name="map-marker-alt"
+                    size={20}
+                    color={Colors.vert}
+                  />
+                </Text>
+                <Text style={styles.label}>Ma position</Text>
+              </View>
+              {/* <Text style={styles.locationText}>
+              Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}
+            </Text> */}
+              <View style={styles.labelWrapper}>
+                <Text
+                  style={styles.marker}
+                  backgroundColor={Colors.markerBackgroundYellow}
+                >
+                  <FontAwesome5
+                    name="map-marker-alt"
+                    size={20}
+                    color={Colors.orange_foncer}
+                    style={{
+                      alignSelf: "center"
+                    }}
+                  />
+                </Text>
+                <Text style={styles.label}>Maison de destination</Text>
+              </View>
+              {/* <Text style={styles.locationText}>
+              Latitude: {destination.latitude}, Longitude: {destination.longitude}
+            </Text> */}
 
-        <TouchableOpacity style={styles.validateButton}>
-          <Text style={styles.buttonText}>Valider</Text>
-        </TouchableOpacity>
+              <TouchableOpacity style={styles.validateButton}>
+                <Text style={styles.buttonText}>Valider</Text>
+              </TouchableOpacity>
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+        {/* <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}
+          backgroundStyle={{ backgroundColor: "red" }}
+          onChange={handleSheetChange}
+        >
+          <View style={styles.bottomContent}>
+            <Text style={styles.label}>📍 Ma position</Text>
+            <Text style={styles.locationText}>
+              Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}
+            </Text>
+
+            <Text style={styles.label}>🏠 Maison de destination</Text>
+            <Text style={styles.locationText}>
+              Latitude: {destination.latitude}, Longitude: {destination.longitude}
+            </Text>
+
+            {/* Bouton Valider (Affiché uniquement quand le bottom sheet est ouvert) 
+            <TouchableOpacity style={styles.validateButton}>
+              <Text style={styles.buttonText}>Valider</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheet> */}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    width: "100%",
+  },
   container: {
     flex: 1,
   },
@@ -165,37 +249,50 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bottomMenu: {
-    position: "absolute",
-    bottom:  0,
-    width: "100%",
-    backgroundColor: "white",
-    padding: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+  bottomWrapper: {
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30
+  },
+  contentContainer: {
+    display: "flex"
+  },
+  bottomContent: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    gap: 10
+  },
+  labelWrapper: {
+    alignSelf: "flex-start",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6
+  },
+  marker: {
+    height: 33,
+    aspectRatio: 1 / 1,
+    textAlign: "center",
+   paddingTop: 6,
+    borderRadius: 18,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  locationText: {
-    fontSize: 14,
-    color: "gray",
-    marginBottom: 10,
+    fontSize: 15,
+    fontFamily: "AbhayaLibreMedium",
+    marginBottom: 5,
+    verticalAlign: "middle"
   },
   validateButton: {
-    backgroundColor: "green",
+    backgroundColor: 'transparent',
+    backgroundColor: Colors.vert,
     padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
+    borderRadius: 15,
+    alignItems: 'center',
+    marginTop: 20,
+    width: '100%',
   },
   buttonText: {
-    color: "white",
+    color: Colors.white,
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "AbhayaLibreBold",
   },
 });

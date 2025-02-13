@@ -5,7 +5,8 @@ module.exports = {
         svgo: {
           plugins: [{ removeDimensions: true }]
         }
-      }]
+      }],
+      "react-native-reanimated/plugin"
     ]
   };
 

@@ -840,15 +840,15 @@
   dependencies:
     uuid "^8.0.0"
 
-"@expo/cli@0.22.13":
-  version "0.22.13"
-  resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.22.13.tgz#86e354b97ad56f7b9828454d94a70a1a7c386a2b"
-  integrity sha512-GpRkCt5Eb0pWXrvpvYswFhUxm0R5197P1acAgj242XfsdNhjVUfjScj+Z6raTRsW0SdIxmingpef2fZaHvUFKQ==
+"@expo/cli@0.22.15":
+  version "0.22.15"
+  resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.22.15.tgz#7cfc4e77707984f161e50163b72bf43d9914f99e"
+  integrity sha512-iXG8E+Fcyq21yM0g5hwdRyAQ9G/T0B+fAXXhwNmUP1jyoqb5wZUmld3gYycsByEJbM2TX9xKMnjtq/zyjYxYOA==
   dependencies:
     "@0no-co/graphql.web" "^1.0.8"
     "@babel/runtime" "^7.20.0"
     "@expo/code-signing-certificates" "^0.0.5"
-    "@expo/config" "~10.0.8"
+    "@expo/config" "~10.0.9"
     "@expo/config-plugins" "~9.0.15"
     "@expo/devcert" "^1.1.2"
     "@expo/env" "~0.4.1"
@@ -1238,6 +1238,21 @@
     chalk "^4.1.0"
     find-up "^5.0.0"
     js-yaml "^4.1.0"
+
+"@gorhom/bottom-sheet@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.1.1.tgz#43ecb9e7b4d4ca4b4cefdf3b6b497f7715f350bc"
+  integrity sha512-Y8FiuRmeZYaP+ZGQ0axDwWrrKqVp4ByYRs1D2fTJTxHMt081MHHRQsqmZ3SK7AFp3cSID+vTqnD8w/KAASpy+w==
+  dependencies:
+    "@gorhom/portal" "1.0.14"
+    invariant "^2.2.4"
+
+"@gorhom/portal@1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@gorhom/portal/-/portal-1.0.14.tgz#1953edb76aaba80fb24021dc774550194a18e111"
+  integrity sha512-MXyL4xvCjmgaORr/rtryDNFy3kU4qUbKlwtQqqsygd0xX3mhKjOLn6mQK8wfu0RkoE0pBE0nAasRoHua+/QZ7A==
+  dependencies:
+    nanoid "^3.3.1"
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -3541,13 +3556,13 @@ expo-status-bar@~2.0.1:
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-2.0.1.tgz#fc07726346dc30fbb68aadb0d7890b34fba42eee"
   integrity sha512-AkIPX7jWHRPp83UBZ1iXtVvyr0g+DgBVvIXTtlmPtmUsm8Vq9Bb5IGj86PW8osuFlgoTVAg7HI/+Ok7yEYwiRg==
 
-expo@~52.0.32:
-  version "52.0.32"
-  resolved "https://registry.yarnpkg.com/expo/-/expo-52.0.32.tgz#204b6d9f2950fb4fa74eb9fbeeebe7ee5823a520"
-  integrity sha512-AyIp3UwaUe43LOIrnspidezQeTseETBeuiifweQ2g1fAXOhvVBzicjAlR8inwmmZIlwLwpM6rv9ZNNRl1zYGUw==
+expo@~52.0.33:
+  version "52.0.33"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-52.0.33.tgz#73f5d9ad8b486dcf1a3d54cc33a8c5001675b931"
+  integrity sha512-8lgeJtqw5N1m7910n/pc8cWBT8bzwaNue1mWXElwdhpKSEpPsCYG1sNQ8eqRnC37Y8aj6i6TrNFmSP++7zUS3Q==
   dependencies:
     "@babel/runtime" "^7.20.0"
-    "@expo/cli" "0.22.13"
+    "@expo/cli" "0.22.15"
     "@expo/config" "~10.0.9"
     "@expo/config-plugins" "~9.0.15"
     "@expo/fingerprint" "0.11.9"
@@ -5274,7 +5289,7 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nanoid@3.3.8, nanoid@^3.3.7:
+nanoid@3.3.8, nanoid@^3.3.1, nanoid@^3.3.7:
   version "3.3.8"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.8.tgz#b1be3030bee36aaff18bacb375e5cce521684baf"
   integrity sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==

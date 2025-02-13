@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ecogestagt",
+    "name": "Ecogestagt",
     "slug": "ecogestagt",
     "version": "1.0.0",
     "scheme": "ecogestagtlink",
@@ -46,8 +46,7 @@
           "locationAlwaysAndWhenInUsePermission": "Autoriser $(PRODUCT_NAME) à utiliser votre position."
         }
       ],
-      "expo-router"
-    ],
+      "expo-router"    ],
     "extra": {
       "router": {
         "origin": false

@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function RenderItemTask({ item, validateTask }) {
     const router = useRouter()
     const handlePress = () =>{
-        router.push({ pathname: "/location/maps", params: { latitude: 6.364560, longitude: 2.423672 } });
+        router.push({ pathname: "/location/maps", params: { latitude: 6.3703, longitude: 2.3912 } });
     }
     //() => validateTask(item.id)
     return (

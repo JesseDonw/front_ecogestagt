@@ -20,5 +20,6 @@ export const Colors = {
     gris_notif: "#FDFCFA",
     redGraph: "#EB5B52",
     blackGraph: "#292927",
-    graphBackground: "#FDF5ED"
+    graphBackground: "#FDF5ED",
+    markerBackgroundYellow: "#FFE14D"
 }
