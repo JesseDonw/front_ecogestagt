@@ -1,27 +1,58 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useLocalSearchParams } from 'expo-router';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from '../../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animated } from 'react-native';
 
 const GOOGLE_MAPS_API_KEY_ANDROID = "AIzaSyBTTAnxDhoifYOBsxW_C7ZyfmpU8LJMbT4";
 const GOOGLE_MAPS_API_KEY_IOS = "AIzaSyBTTAnxDhoifYOBsxW_C7ZyfmpU8LJMbT4";
 
 const GOOGLE_MAPS_APIKEY = Platform.OS === 'android' ? GOOGLE_MAPS_API_KEY_ANDROID : GOOGLE_MAPS_API_KEY_IOS;
-
+const { height } = Dimensions.get("window")
+console.log('height :>> ', height);
 export default function MapScreen() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [region, setRegion] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { latitude, longitude } = useLocalSearchParams()
 
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["15%", "25%"], []);
+  const mapRef = useRef(null);
+
+  const [mapType, setMapType] = useState("standard");
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [isActive, setIsActive] = useState(false);
+
+  const toggleMapType = () => {
+    setMapType((prevType) =>
+      prevType === "standard" ? "satellite" : "standard"
+    );
+  };
+
+  const handlePress = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.2,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    setIsActive(!isActive)
+    toggleMapType();
+  };
 
   // Coordonnées de la maison (exemple au Bénin : Cotonou)
   const destination = {
@@ -42,9 +73,16 @@ export default function MapScreen() {
       });
 
       setCurrentLocation(coords);
-      // fetchRoute(coords.latitude, coords.longitude);
+      fetchRoute(coords.latitude, coords.longitude);
     })();
   }, []);
+
+  useEffect(() => {
+    if (currentLocation) {
+      bottomSheetRef.current?.snapToIndex(0); // Affiche le BottomSheet après récupération de la position
+      console.log('currentLocation :>> ', currentLocation);
+    }
+  }, [currentLocation]);
 
   const fetchRoute = async (startLat, startLng) => {
     const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&alternatives=true&key=${GOOGLE_MAPS_APIKEY}`;
@@ -114,45 +152,73 @@ export default function MapScreen() {
     console.log("handleSheetChange", index);
   }, []);
 
+  const handleCenterPress = () => {
+    if (currentLocation) {
+      mapRef.current?.animateCamera({
+        center: {
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude
+        },
+        zoom: 15
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
-        {/* {loading ? (
-        <ActivityIndicator size="large" color="green" style={styles.loader} />
-      ) : (
-        <MapView
-          style={styles.map}
-          region={region}
-          showsUserLocation
-          followsUserLocation
-          compassOffset={{ x: 0, y: 80 }}
-        >
-          {currentLocation && (
-            <Marker
-              coordinate={{
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-              }}
-              pinColor="green"
-              title="Ma position"
-            />
-          )}
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.vert} style={styles.loader} />
+        ) : (
+          <>
+            <MapView
+              style={styles.map}
+              region={region}
+              showsUserLocation
+              followsUserLocation
+              compassOffset={{ x: 0, y: 80 }}
+              showsMyLocationButton={false}
+              ref={mapRef}
+              mapType={mapType}
+            >
 
-          <Marker
-            coordinate={destination}
-            pinColor="gold"
-            title="Maison de destination"
-          />
+              {currentLocation && (
+                <Marker
+                  coordinate={{
+                    latitude: currentLocation.latitude,
+                    longitude: currentLocation.longitude,
+                  }}
+                  pinColor={Colors.vert}
+                  title="Ma position"
+                />
+              )}
 
-          {routeCoordinates.length > 0 && (
-            <Polyline
-              coordinates={routeCoordinates}
-              strokeWidth={4}
-              strokeColor="blue"
-            />
-          )}
-        </MapView>
-      )} */}
+              <Marker
+                coordinate={destination}
+                pinColor={Colors.orange_foncer}
+                title="Maison de destination"
+              />
+
+              {routeCoordinates.length > 0 && (
+                <Polyline
+                  coordinates={routeCoordinates}
+                  strokeWidth={4}
+                  strokeColor="blue"
+                />
+              )}
+            </MapView>
+            {/* Bouton de recentrage */}
+            <TouchableOpacity style={styles.centerButton} onPress={handleCenterPress}>
+              <MaterialIcons name="my-location" size={24} color={Colors.vert} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handlePress} style={styles.mapTypeButton}>
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <FontAwesome5 name="map" size={24} color={isActive ? Colors.vert : "black"} />
+              </Animated.View>
+            </TouchableOpacity>
+          </>
+        )}
+
 
         {/* Bottom Sheet */}
 
@@ -162,6 +228,7 @@ export default function MapScreen() {
           enableDynamicSizing={false}
           onChange={handleSheetChange}
           backgroundStyle={styles.bottomWrapper}
+          index={0}
         >
           <BottomSheetView style={styles.contentContainer}>
             <View style={styles.bottomContent}>
@@ -272,7 +339,7 @@ const styles = StyleSheet.create({
     height: 33,
     aspectRatio: 1 / 1,
     textAlign: "center",
-   paddingTop: 6,
+    paddingTop: 6,
     borderRadius: 18,
   },
   label: {
@@ -295,4 +362,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "AbhayaLibreBold",
   },
+  centerButton: {
+    position: "absolute",
+    top: height / 2,
+    right: 20,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 50,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  mapTypeButton: {
+    position: "absolute",
+    top: (height / 2) + 70,
+    right: 20,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 50,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  }
 });

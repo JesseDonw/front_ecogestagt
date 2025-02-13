@@ -15,7 +15,7 @@ export default function MapLayout() {
                 headerTransparent: true,
   headerTitle: "",
   headerLeft: () => (
-    <Link href="/home" style={styles.wrapperBack}>
+    <Link href="/task" style={styles.wrapperBack}>
       <Entypo
         name="chevron-left"
         size={26}
