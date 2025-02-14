@@ -122,7 +122,7 @@ export default function MapScreen() {
 
   const handleValidateTask = async () => {
     try {
-      const response = await fetch(`https://3fab-137-255-54-41.ngrok-free.app/api/taches/${taskId}/validate`, {
+      const response = await fetch(`https://1889-137-255-38-133.ngrok-free.app/api/taches/${taskId}/validate`, {
         method: 'PUT',
       });
 

@@ -22,7 +22,7 @@ export default function Taches() {
   // 🔄 Récupération des tâches depuis l'API
   const fetchTasks = async () => {
     try {
-      const response = await fetch('https://3fab-137-255-54-41.ngrok-free.app/api/taches');
+      const response = await fetch('https://1889-137-255-38-133.ngrok-free.app/api/taches');
       const data = await response.json();
       setTaches(data);
     } catch (error) {
