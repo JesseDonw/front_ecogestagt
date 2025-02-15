@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
-import { FlatList} from 'react-native';
+import React from 'react';
+import { FlatList, View, Text, StyleSheet } from 'react-native';
 import RenderItemTask from '../RenderItemTask';
 
-export default function AllTasks ({taches, validateTask}) {
-    return (
-        <FlatList
-              data={taches}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <RenderItemTask item={item} validateTask={validateTask}/>
-              )}
-            />
-      );
+export default function AllTasks({ taches, validateTask }) {
+  return (
+    <FlatList
+      data={taches}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <RenderItemTask item={item} validateTask={validateTask} />
+      )}
+      ListEmptyComponent={<Text style={styles.emptyText}>Aucune tâche disponible</Text>}
+    />
+  );
 }
+
+const styles = StyleSheet.create({
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
+});

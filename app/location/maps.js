@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback, } from 'react
 import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter  } from 'expo-router';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,11 +17,12 @@ const GOOGLE_MAPS_APIKEY = Platform.OS === 'android' ? GOOGLE_MAPS_API_KEY_ANDRO
 const { height } = Dimensions.get("window")
 console.log('height :>> ', height);
 export default function MapScreen() {
+  const router = useRouter();
+  const { latitude, longitude, taskId } = useLocalSearchParams();
+
   const [currentLocation, setCurrentLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [region, setRegion] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { latitude, longitude } = useLocalSearchParams()
+  const [loading, setLoading] = useState(true);
 
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["15%", "25%"], []);
@@ -54,7 +55,6 @@ export default function MapScreen() {
     toggleMapType();
   };
 
-  // Coordonnées de la maison (exemple au Bénin : Cotonou)
   const destination = {
     latitude: parseFloat(latitude),  // Latitude de Cotonou
     longitude: parseFloat(longitude)  // Longitude de Cotonou
@@ -62,18 +62,19 @@ export default function MapScreen() {
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission refusée");
+        Alert.alert("Permission refusée", "Nous avons besoin de votre permission pour accéder à votre localisation.");
+        setLoading(false);
         return;
       }
 
       const { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
+        accuracy: Location.Accuracy.Highest,
       });
 
       setCurrentLocation(coords);
-      fetchRoute(coords.latitude, coords.longitude);
+      await fetchRoutes(coords.latitude, coords.longitude);
     })();
   }, []);
 
@@ -84,52 +85,73 @@ export default function MapScreen() {
     }
   }, [currentLocation]);
 
-  const fetchRoute = async (startLat, startLng) => {
-    const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&alternatives=true&key=${GOOGLE_MAPS_APIKEY}`;
+  // Fusion des itinéraires Google Maps et OpenStreetMap
+  const fetchRoutes = async (startLat, startLng) => {
+    setLoading(true);
+    const googleRoute = await fetchGoogleRoute(startLat, startLng);
+    const osmRoute = await fetchOSMRoute(startLat, startLng);
 
+    // Vérifie si les deux itinéraires sont disponibles
+    if (googleRoute.length > 0 && osmRoute.length > 0) {
+      // Choisir l'itinéraire avec le plus de points (généralement plus précis)
+      setRouteCoordinates(googleRoute.length > osmRoute.length ? googleRoute : osmRoute);
+    } else if (googleRoute.length > 0) {
+      setRouteCoordinates(googleRoute);
+    } else if (osmRoute.length > 0) {
+      setRouteCoordinates(osmRoute);
+    } else {
+      Alert.alert("Erreur", "Impossible de récupérer l'itinéraire.");
+    }
+    setLoading(false);
+  };
+
+  // Itinéraire depuis Google Maps
+  const fetchGoogleRoute = async (startLat, startLng) => {
+    const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&key=${GOOGLE_MAPS_API_KEY}`;
     try {
       const response = await fetch(endpoint);
       const data = await response.json();
-
       console.log("API Directions Response:", data);
-
       if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        const points = decodePolyline(route.overview_polyline.points);
-        setRouteCoordinates(points);
-
-        // Zoom pour afficher tout l'itinéraire
-        const bounds = route.bounds;
-        setRegion({
-          latitude: (bounds.northeast.lat + bounds.southwest.lat) / 2,
-          longitude: (bounds.northeast.lng + bounds.southwest.lng) / 2,
-          latitudeDelta: Math.abs(bounds.northeast.lat - bounds.southwest.lat) * 1.5,
-          longitudeDelta: Math.abs(bounds.northeast.lng - bounds.southwest.lng) * 1.5,
-        });
-        setLoading(false);
-      } else {
-        console.error("Aucune route trouvée :", data.status);
-        setLoading(false);
+        return decodePolyline(data.routes[0].overview_polyline.points);
       }
     } catch (error) {
-      console.error("Erreur lors de la récupération de l'itinéraire :", error);
-      setLoading(false);
+      console.error("Erreur Google Maps :", error);
     }
+    return [];
   };
 
+  // Itinéraire depuis OpenStreetMap (via OSRM)
+  const fetchOSMRoute = async (startLat, startLng) => {
+    const endpoint = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destination.longitude},${destination.latitude}?overview=full&geometries=geojson`;
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      if (data.routes && data.routes.length > 0) {
+        return data.routes[0].geometry.coordinates.map(coord => ({
+          latitude: coord[1],
+          longitude: coord[0],
+        }));
+      }
+    } catch (error) {
+      console.error("Erreur OpenStreetMap :", error);
+    }
+    return [];
+  };
+
+  // Décodage de la polyline de Google Maps
   const decodePolyline = (encoded) => {
     let points = [];
-    let index = 0, len = encoded.length;
-    let lat = 0, lng = 0;
+    let index = 0, lat = 0, lng = 0;
 
-    while (index < len) {
+    while (index < encoded.length) {
       let b, shift = 0, result = 0;
       do {
         b = encoded.charCodeAt(index++) - 63;
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      let dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      let dlat = (result & 1 ? ~(result >> 1) : (result >> 1));
       lat += dlat;
 
       shift = 0;
@@ -139,12 +161,31 @@ export default function MapScreen() {
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      let dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+      let dlng = (result & 1 ? ~(result >> 1) : (result >> 1));
       lng += dlng;
 
       points.push({ latitude: lat / 1e5, longitude: lng / 1e5 });
     }
     return points;
+  };
+
+  const handleValidateTask = async () => {
+    try {
+      const response = await fetch(`https://1889-137-255-38-133.ngrok-free.app/api/taches/${taskId}/validate`, {
+        method: 'PUT',
+      });
+
+      if (response.ok) {
+        Alert.alert("Succès", "La tâche a été validée avec succès !");
+        router.push('/task');
+      } else {
+        const errorData = await response.json();
+        Alert.alert("Erreur", errorData.message || "Impossible de valider la tâche.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la validation de la tâche :", error);
+      Alert.alert("Erreur", "Impossible de valider la tâche.");
+    }
   };
 
   // callbacks
@@ -173,7 +214,13 @@ export default function MapScreen() {
           <>
             <MapView
               style={styles.map}
-              region={region}
+              // region={region}
+              initialRegion={{
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
               showsUserLocation
               followsUserLocation
               compassOffset={{ x: 0, y: 80 }}

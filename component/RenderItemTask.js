@@ -1,38 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function RenderItemTask({ item, validateTask }) {
-    const router = useRouter()
-    const handlePress = () =>{
-        router.push({ pathname: "/location/maps", params: { latitude: 6.3703, longitude: 2.3912 } });
-    }
-    //() => validateTask(item.id)
+    const router = useRouter();
+  
+    const handlePress = () => {
+      router.push({
+        pathname: "/location/maps",
+        params: {
+          latitude: item.localisation.latitude,
+          longitude: item.localisation.longitude,
+          taskId: item.id,
+        }
+      });
+    };
+  
     return (
-        <View style={styles.taskCard}>
-            <View>
-            <Text style={styles.taskTitle}>{item.title}</Text>
-            <Text style={styles.taskDate}>{item.date}</Text>
-            </View>
-            <TouchableOpacity
-                onPress={handlePress}
-                disabled={item.valid}
-            >
-                <LinearGradient
-                    colors={item.valid ? [Colors.gris_foncer, Colors.gris_foncer] : [Colors.gradient, Colors.gradient_foncer]}
-                    style={styles.validateButton}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                >
-                    <Text style={styles.buttonText}>{item.valid ? 'Validée' : 'Valider'}</Text>
-
-                </LinearGradient>
-            </TouchableOpacity>
+      <View style={styles.taskCard}>
+        <View>
+        <Text style={styles.taskLocation}>{item.localisation.location}</Text>
+          <Text style={styles.taskTitle}>{item.nom_tache}</Text>
+          <Text style={styles.taskDate}>{item.date_envoie_tache}</Text>
+          
         </View>
-    )
-}
+  
+        <TouchableOpacity onPress={handlePress} disabled={item.statut === 'terminée'}>
+          <LinearGradient
+            colors={item.statut === 'terminée' ? [Colors.gris_foncer, Colors.gris_foncer] : [Colors.gradient, Colors.gradient_foncer]}
+            style={styles.validateButton}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <Text style={styles.buttonText}>{item.statut === 'terminée' ? 'Validée' : 'Valider'}</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
 const styles = StyleSheet.create({
     taskCard: {

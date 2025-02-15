@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Colors } from '../../constants/Colors';
@@ -6,6 +6,8 @@ import AllTasks from '../../component/tasks/AllTasks';
 import TaskDone from '../../component/tasks/TaskDone';
 import RemainingTask from '../../component/tasks/RemainingTask';
 import CustomTabBar from '../../component/CustomTabBar';
+
+
 
 export default function Taches() {
   const [index, setIndex] = useState(0);
@@ -15,32 +17,45 @@ export default function Taches() {
     { key: 'restantes', title: 'Restantes' },
   ]);
 
-  const [taches, setTaches] = useState([
-    { id: '1', title: 'Zogbadje', date: 'Lundi 02 oct 2024', valid: false },
-    { id: '2', title: 'Arconville', date: 'Lundi 02 oct 2024', valid: false },
-  ]);
+  const [taches, setTaches] = useState([]);
 
-  const validateTask = (id) => {
-    setTaches((prevTaches) =>
-      prevTaches.map((tache) =>
-        tache.id === id ? { ...tache, valid: true } : tache
-      )
-    );
+  // 🔄 Récupération des tâches depuis l'API
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('https://1889-137-255-38-133.ngrok-free.app/api/taches');
+      const data = await response.json();
+      setTaches(data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des tâches :", error);
+    }
   };
 
-  const Toutes = () => (
-    <AllTasks taches={taches} validateTask={validateTask} />
-  );
+  useEffect(() => {
+    fetchTasks();  // Charger les tâches au démarrage
+  }, []);
 
-  const Faites = () => (
-    <TaskDone taches={taches} validateTask={validateTask} />
-  );
+  const validateTask = async (id) => {
+    try {
+      const response = await fetch(`https://3fab-137-255-54-41.ngrok-free.app/api/taches/${id}/validate`, {
+        method: 'PUT',
+      });
+      const updatedTask = await response.json();
 
-  const Restantes = () => (
-    <RemainingTask taches={taches} validateTask={validateTask} />
-  );
+      // Mettre à jour l'état local des tâches après validation
+      setTaches((prevTaches) =>
+        prevTaches.map((tache) =>
+          tache.id === id ? { ...tache, statut: 'terminée' } : tache
+        )
+      );
+    } catch (error) {
+      console.error('Erreur lors de la validation de la tâche :', error);
+    }
+  };
 
-  
+  const Toutes = () => <AllTasks taches={taches} validateTask={validateTask} />;
+  const Faites = () => <TaskDone taches={taches} validateTask={validateTask} />;
+  const Restantes = () => <RemainingTask taches={taches} validateTask={validateTask} />;
+
   const renderScene = SceneMap({
     toutes: Toutes,
     faites: Faites,
