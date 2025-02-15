@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback, } from 'react
 import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { useLocalSearchParams, useRouter  } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { MaterialIcons } from "@expo/vector-icons";
@@ -23,7 +23,7 @@ export default function MapScreen() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["15%", "25%"], []);
   const mapRef = useRef(null);
@@ -31,6 +31,7 @@ export default function MapScreen() {
   const [mapType, setMapType] = useState("standard");
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [isActive, setIsActive] = useState(false);
+  const [region, setRegion] = useState(null);
 
   const toggleMapType = () => {
     setMapType((prevType) =>
@@ -56,8 +57,8 @@ export default function MapScreen() {
   };
 
   const destination = {
-    latitude: parseFloat(latitude),  // Latitude de Cotonou
-    longitude: parseFloat(longitude)  // Longitude de Cotonou
+    latitude: parseFloat(latitude),
+    longitude: parseFloat(longitude)
   };
 
   useEffect(() => {
@@ -88,13 +89,32 @@ export default function MapScreen() {
   // Fusion des itinéraires Google Maps et OpenStreetMap
   const fetchRoutes = async (startLat, startLng) => {
     setLoading(true);
-    const googleRoute = await fetchGoogleRoute(startLat, startLng);
-    const osmRoute = await fetchOSMRoute(startLat, startLng);
+    const {googleRoute, boundsGoogle} = await fetchGoogleRoute(startLat, startLng);
+    const {osmRoute, boundsOsm} = await fetchOSMRoute(startLat, startLng);
+
+    console.log(' boundsGoogle, boundsOsm :>> ',  boundsGoogle, boundsOsm);
 
     // Vérifie si les deux itinéraires sont disponibles
     if (googleRoute.length > 0 && osmRoute.length > 0) {
       // Choisir l'itinéraire avec le plus de points (généralement plus précis)
-      setRouteCoordinates(googleRoute.length > osmRoute.length ? googleRoute : osmRoute);
+      if(googleRoute.length > osmRoute.length){
+        setRouteCoordinates(googleRoute)
+        setRegion({
+          latitude: (boundsGoogle.northeast.lat + boundsGoogle.southwest.lat) / 2,
+          longitude: (boundsGoogle.northeast.lng + boundsGoogle.southwest.lng) / 2,
+          latitudeDelta: Math.abs(boundsGoogle.northeast.lat - boundsGoogle.southwest.lat) * 1.5,
+          longitudeDelta: Math.abs(boundsGoogle.northeast.lng - boundsGoogle.southwest.lng) * 1.5,
+        });
+      } else {
+        setRouteCoordinates(osmRoute)
+        setRegion({
+          latitude: (boundsOsm.northeast.lat + boundsOsm.southwest.lat) / 2,
+          longitude: (boundsOsm.northeast.lng + boundsOsm.southwest.lng) / 2,
+          latitudeDelta: Math.abs(boundsOsm.northeast.lat - boundsOsm.southwest.lat) * 1.5,
+          longitudeDelta: Math.abs(boundsOsm.northeast.lng - boundsOsm.southwest.lng) * 1.5,
+        });
+      }
+      // setRouteCoordinates(googleRoute.length > osmRoute.length ? googleRoute : osmRoute);
     } else if (googleRoute.length > 0) {
       setRouteCoordinates(googleRoute);
     } else if (osmRoute.length > 0) {
@@ -107,13 +127,16 @@ export default function MapScreen() {
 
   // Itinéraire depuis Google Maps
   const fetchGoogleRoute = async (startLat, startLng) => {
-    const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&key=${GOOGLE_MAPS_API_KEY}`;
+    const endpoint = `https://maps.googleapis.com/maps/api/directions/json?origin=${startLat},${startLng}&destination=${destination.latitude},${destination.longitude}&mode=driving&key=${GOOGLE_MAPS_APIKEY}`;
     try {
       const response = await fetch(endpoint);
       const data = await response.json();
-      console.log("API Directions Response:", data);
+      console.log("API Directions Response:", data.routes[0]);
       if (data.routes && data.routes.length > 0) {
-        return decodePolyline(data.routes[0].overview_polyline.points);
+        const route = data.routes[0];
+        const googleRoute = decodePolyline(route.overview_polyline.points);
+        const boundsGoogle = route.bounds;
+        return { googleRoute, boundsGoogle };
       }
     } catch (error) {
       console.error("Erreur Google Maps :", error);
@@ -127,11 +150,29 @@ export default function MapScreen() {
     try {
       const response = await fetch(endpoint);
       const data = await response.json();
+      console.log('data osrm:>> ', data.routes[0]);
       if (data.routes && data.routes.length > 0) {
-        return data.routes[0].geometry.coordinates.map(coord => ({
+        const osmRoute = data.routes[0].geometry.coordinates.map(coord => ({
           latitude: coord[1],
           longitude: coord[0],
         }));
+
+        // Calculer les limites (bounds) de l'itinéraire
+        const latitudes = osmRoute.map(coord => coord.latitude);
+        const longitudes = osmRoute.map(coord => coord.longitude);
+
+        const boundsOsm = {
+          northeast: {
+            lat: Math.max(...latitudes),
+            lng: Math.max(...longitudes),
+          },
+          southwest: {
+            lat: Math.min(...latitudes),
+            lng: Math.min(...longitudes),
+          },
+        };
+
+        return { osmRoute, boundsOsm };
       }
     } catch (error) {
       console.error("Erreur OpenStreetMap :", error);
@@ -214,13 +255,7 @@ export default function MapScreen() {
           <>
             <MapView
               style={styles.map}
-              // region={region}
-              initialRegion={{
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
+              region={region}
               showsUserLocation
               followsUserLocation
               compassOffset={{ x: 0, y: 80 }}
@@ -258,6 +293,8 @@ export default function MapScreen() {
             <TouchableOpacity style={styles.centerButton} onPress={handleCenterPress}>
               <MaterialIcons name="my-location" size={24} color={Colors.vert} />
             </TouchableOpacity>
+
+            {/* Bouton de carte */}
             <TouchableOpacity onPress={handlePress} style={styles.mapTypeButton}>
               <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <FontAwesome5 name="map" size={24} color={isActive ? Colors.vert : "black"} />
@@ -292,9 +329,6 @@ export default function MapScreen() {
                 </Text>
                 <Text style={styles.label}>Ma position</Text>
               </View>
-              {/* <Text style={styles.locationText}>
-              Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}
-            </Text> */}
               <View style={styles.labelWrapper}>
                 <Text
                   style={styles.marker}
@@ -311,9 +345,6 @@ export default function MapScreen() {
                 </Text>
                 <Text style={styles.label}>Maison de destination</Text>
               </View>
-              {/* <Text style={styles.locationText}>
-              Latitude: {destination.latitude}, Longitude: {destination.longitude}
-            </Text> */}
 
               <TouchableOpacity style={styles.validateButton}>
                 <Text style={styles.buttonText}>Valider</Text>
@@ -321,27 +352,6 @@ export default function MapScreen() {
             </View>
           </BottomSheetView>
         </BottomSheet>
-        {/* <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}
-          backgroundStyle={{ backgroundColor: "red" }}
-          onChange={handleSheetChange}
-        >
-          <View style={styles.bottomContent}>
-            <Text style={styles.label}>📍 Ma position</Text>
-            <Text style={styles.locationText}>
-              Latitude: {currentLocation?.latitude}, Longitude: {currentLocation?.longitude}
-            </Text>
-
-            <Text style={styles.label}>🏠 Maison de destination</Text>
-            <Text style={styles.locationText}>
-              Latitude: {destination.latitude}, Longitude: {destination.longitude}
-            </Text>
-
-            {/* Bouton Valider (Affiché uniquement quand le bottom sheet est ouvert) 
-            <TouchableOpacity style={styles.validateButton}>
-              <Text style={styles.buttonText}>Valider</Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheet> */}
       </View>
     </SafeAreaView>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import RenderItemTask from '../RenderItemTask';
+import { router } from 'expo-router';
 
 export default function AllTasks({ taches, validateTask }) {
   return (
@@ -10,13 +11,14 @@ export default function AllTasks({ taches, validateTask }) {
       renderItem={({ item }) => (
         <RenderItemTask item={item} validateTask={validateTask} />
       )}
-      ListEmptyComponent={<Text style={styles.emptyText}>Aucune tâche disponible</Text>}
+      ListEmptyComponent={<Text style={styles.emptyText}>Aucune tâche disponible </Text>}
     />
   );
 }
 
 const styles = StyleSheet.create({
   emptyText: {
+    fontFamily: "AbhayaLibreRegular", 
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
