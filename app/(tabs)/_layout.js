@@ -60,6 +60,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
+                    headerTitleAlign: 'center',
                     headerLeft: () =>
                         <Link href="/home" style={styles.wrapperBack}>
                             <Entypo

@@ -23,11 +23,11 @@ export default function App() {
     { id: 3, name: 'SEME-PODJI', thisWeek: [70, 50, 30, 90, 100, 7, 7], lastWeek: [60, 45, 25, 80, 90, 60, 45, 25, 80, 90, 60, 45, 25, 80] },
     { id: 4, name: 'OUIDAH', thisWeek: [20, 30, 10, 50, 60, 7, 7], lastWeek: [15, 25, 5, 40, 50, 15, 25, 5, 40, 50, 15, 25, 5, 40] },
     { id: 5, name: 'ABOMEY', thisWeek: [10, 70, 60, 30, 40, 7, 7], lastWeek: [5, 60, 50, 20, 30, 5, 60, 50, 20, 30, 5, 60, 50, 20] },
-   ]);
+  ]);
 
   const [search, setSearch] = useState("")
   console.log('search :>> ', search);
-  const filteredCities = [...(search ? 
+  const filteredCities = [...(search ?
     cities.filter(city => city.name.toLocaleLowerCase().includes(search?.toLowerCase()))
     : cities)].sort((a, b) => (a.name < b.name) ? -1 : 1)
   console.log('filteredCities :>> ', filteredCities);
@@ -64,19 +64,18 @@ export default function App() {
         <View style={styles.searchContainerWrapper}>
           <View style={styles.searchContainer}>
             <Ionicons name="search-outline" size={20} color={Colors.vert_select} style={styles.searchIcon} />
-            <TextInput value={search} onChangeText={(e) => setSearch(e)} placeholder="Rechercher une tâche" style={styles.searchInput} />
+            <TextInput cursorColor={Colors.vert} value={search} onChangeText={(e) => setSearch(e)} placeholder="Rechercher une tâche" style={styles.searchInput} />
           </View>
 
-          <View style={{position: "relative"}}>
+          <TouchableOpacity activeOpacity={1} onPress={() => router.push("/notification/notif")} style={{ position: "relative" }}>
             <Ionicons
-            name="notifications-outline"
-            size={22}
-            color={Colors.gradient}
-            style={styles.notificationIcon}
-            onPress={() => router.push("/notification/notif")}
-          />
-          <Badge size={19} style={{position:"absolute", top: 0, right:0, backgroundColor: Colors.danger}} visible={true}>3</Badge>
-          </View>
+              name="notifications-outline"
+              size={22}
+              color={Colors.gradient}
+              style={styles.notificationIcon}
+            />
+            <Badge size={19} style={{ position: "absolute", top: 0, right: 0, backgroundColor: Colors.danger }} visible={true}>3</Badge>
+          </TouchableOpacity>
         </View>
 
         {/* Liste des villes */}
@@ -87,12 +86,12 @@ export default function App() {
           contentContainerStyle={styles.cityList}
           renderItem={({ item, index }) => (
             <TouchableOpacity
-            
+
               style={[
                 styles.cityButton,
                 { backgroundColor: colorsList[index % colorsList.length] },
                 item.id === selectedCity.id && styles.cityButtonSelected,
-                index !== 0 && {marginTop: -(index+2), zIndex: item.id === selectedCity.id ? index : -index},
+                index !== 0 && { marginTop: -(index + 2), zIndex: item.id === selectedCity.id ? index : -index },
               ]}
               onPress={() => setSelectedCity(item)}
               activeOpacity={0.7}
@@ -112,15 +111,15 @@ export default function App() {
         {/* Graphique */}
         <View style={styles.chartContainer}>
           <View style={styles.chartLegend}>
-            <PuceList dotColor={Colors.redGraph} textColor={Colors.noir} text={"Collecte réalisée cette semaine"}/>
-          <PuceList dotColor={Colors.blackGraph} textColor={Colors.noir} text={"Collecte réalisée les semaines précédentes"}/>
+            <PuceList dotColor={Colors.redGraph} textColor={Colors.noir} text={"Collecte réalisée cette semaine"} />
+            <PuceList dotColor={Colors.blackGraph} textColor={Colors.noir} text={"Collecte réalisée les semaines précédentes"} />
           </View>
           <BarChart
-          previousData={selectedCity.lastWeek}
-          currentData={selectedCity.thisWeek}
-          barWidth={3.06}
-          barSpacing={11}
-          cornerRadius={3.06}
+            previousData={selectedCity.lastWeek}
+            currentData={selectedCity.thisWeek}
+            barWidth={3.06}
+            barSpacing={11}
+            cornerRadius={3.06}
           />
         </View>
       </View>
