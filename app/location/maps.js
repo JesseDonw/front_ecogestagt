@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Button, Dimensions,Alert } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -212,12 +212,11 @@ export default function MapScreen() {
 
   const handleValidateTask = async () => {
     try {
-      const response = await fetch(`https://1889-137-255-38-133.ngrok-free.app/api/taches/${taskId}/validate`, {
+      const response = await fetch(`https://ecogest-e4b9c843b0a7.herokuapp.com/api/taches/${taskId}/validate`, {
         method: 'PUT',
       });
 
       if (response.ok) {
-        Alert.alert("Succès", "La tâche a été validée avec succès !");
         router.push('/task');
       } else {
         const errorData = await response.json();
@@ -346,9 +345,10 @@ export default function MapScreen() {
                 <Text style={styles.label}>Maison de destination</Text>
               </View>
 
-              <TouchableOpacity style={styles.validateButton}>
-                <Text style={styles.buttonText}>Valider</Text>
-              </TouchableOpacity>
+              <TouchableOpacity style={styles.validateButton} onPress={handleValidateTask}>
+  <Text style={styles.buttonText}>Valider</Text>
+</TouchableOpacity>
+
             </View>
           </BottomSheetView>
         </BottomSheet>

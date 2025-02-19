@@ -83,7 +83,7 @@ export default function AgentDiscussion() {
   );
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 89}>
       <View style={styles.innerContainer}>
         <UserCard imageUrl={undefined} name="Administrateur" isOnline={true} />
         <View style={styles.chatWrapper}>

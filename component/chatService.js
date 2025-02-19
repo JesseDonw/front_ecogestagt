@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://3fab-137-255-54-41.ngrok-free.app/api';
+const API_URL = 'https://ecogest-e4b9c843b0a7.herokuapp.com/api';
 const ADMIN_ID = 1;
 const ADMIN_TYPE = 'App\\Models\\Administrateur';
 const AGENT_TYPE = 'App\\Models\\AgentCollecte';
