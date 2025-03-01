@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Colors } from '../../constants/Colors';
@@ -6,6 +6,7 @@ import AllTasks from '../../component/tasks/AllTasks';
 import TaskDone from '../../component/tasks/TaskDone';
 import RemainingTask from '../../component/tasks/RemainingTask';
 import CustomTabBar from '../../component/CustomTabBar';
+import { useFocusEffect } from 'expo-router';
 
 
 
@@ -30,9 +31,15 @@ export default function Taches() {
     }
   };
 
-  useEffect(() => {
-    fetchTasks();  // Charger les tâches au démarrage
-  }, []);
+  //useEffect(() => {
+   //fetchTasks();  // Charger les tâches au démarrage
+  //}, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks(); // Charger les tâches à chaque fois que l'écran est affiché
+    }, [])
+  );
 
   const validateTask = async (id) => {
     try {
