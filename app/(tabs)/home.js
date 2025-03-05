@@ -58,7 +58,7 @@ export default function App() {
           name='Agent'
           prenom='Ag'
           email='agent@gmail.com'
-          image="https://ui-avatars.com/api/?name=Ad&background=0D8AC&color=fff&size=80"
+          image="https://ui-avatars.com/api/?name=AG&background=0D8ABC&color=fff&size=80"
         />
         {/* Barre de recherche */}
         <View style={styles.searchContainerWrapper}>
