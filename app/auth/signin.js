@@ -155,7 +155,7 @@ export default function Signin() {
                 onPress={() => loading ? null : handleSignin()}
             >
                 {loading ?
-                    <ActivityIndicator color={Colors.vert} />
+                    <ActivityIndicator color={Colors.white} />
                     :
                     <Text style={styles.loginButtonText}>Se connecter</Text>
                 }
