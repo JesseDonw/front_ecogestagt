@@ -212,7 +212,7 @@ export default function MapScreen() {
 
   const handleValidateTask = async () => {
     try {
-      const response = await fetch(`https://ecogest-e4b9c843b0a7.herokuapp.com/api/taches/${taskId}/validate`, {
+      const response = await fetch(`https://ecogest1-69586dbc1b71.herokuapp.com/api/taches/${taskId}/validate`, {
         method: 'PUT',
       });
 
